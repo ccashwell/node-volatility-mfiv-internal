@@ -1,0 +1,7 @@
+{
+  "mochaExplorer.watch": "dist/**/*.js",
+  "mochaExplorer.require": "source-map-support/register",
+  "mochaExplorer.files": "dist/**/*.js",
+  "mochaExplorer.logpanel": true,
+  "mochaExplorer.nodePath": null
+}

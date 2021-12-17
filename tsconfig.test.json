@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "es2020",
+    "lib": ["es2020"],
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "sourceMap": false,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "strict": true,
+    "types": ["mocha", "chai", "node"],
+    "typeRoots": ["node_modules/@types", "./src/types"]
+  },
+  "filesGlob": ["./src/**/*.ts", "./test/**/*.ts", "./typings/index.d.ts", "./node_modules/@types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
+  "include": ["test/**/*.ts"]
+}

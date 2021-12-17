@@ -1,0 +1,422 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/MfivExample",
+  "definitions": {
+    "MfivExample": {
+      "$ref": "#/definitions/MethodologyExample%3C%222022-01-01%22%2CMfivContext%2CMfivParams%2CMfivExtendedResult%3E"
+    },
+    "MethodologyExample<\"2022-01-01\",MfivContext,MfivParams,MfivExtendedResult>": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "const": "2022-01-01"
+        },
+        "context": {
+          "$ref": "#/definitions/MfivContext"
+        },
+        "params": {
+          "$ref": "#/definitions/MfivParams"
+        },
+        "result": {
+          "$ref": "#/definitions/MfivExtendedResult"
+        }
+      },
+      "required": ["version", "context", "params", "result"],
+      "additionalProperties": false
+    },
+    "MfivContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "windowInterval": {
+          "$ref": "#/definitions/MfivWindowInterval"
+        },
+        "risklessRate": {
+          "type": "number"
+        },
+        "risklessRateAt": {
+          "type": "string"
+        },
+        "risklessRateSource": {
+          "type": "string"
+        },
+        "nearMidBook": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mid": {
+                "type": "number"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "exchange": {
+                "$ref": "#/definitions/Exchange"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "optionType": {
+                "type": "string",
+                "enum": ["put", "call"]
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "strikePrice": {
+                "type": "number"
+              },
+              "bestBidPrice": {
+                "type": "number"
+              },
+              "bestAskPrice": {
+                "type": "number"
+              },
+              "markPrice": {
+                "type": "number"
+              },
+              "underlyingPrice": {
+                "type": "number"
+              }
+            },
+            "required": ["exchange", "expirationDate", "optionType", "strikePrice", "symbol", "timestamp"]
+          }
+        },
+        "nextMidBook": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mid": {
+                "type": "number"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "exchange": {
+                "$ref": "#/definitions/Exchange"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "optionType": {
+                "type": "string",
+                "enum": ["put", "call"]
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "strikePrice": {
+                "type": "number"
+              },
+              "bestBidPrice": {
+                "type": "number"
+              },
+              "bestAskPrice": {
+                "type": "number"
+              },
+              "markPrice": {
+                "type": "number"
+              },
+              "underlyingPrice": {
+                "type": "number"
+              }
+            },
+            "required": ["exchange", "expirationDate", "optionType", "strikePrice", "symbol", "timestamp"]
+          }
+        },
+        "methodology": {
+          "$ref": "#/definitions/Methodology"
+        },
+        "exchange": {
+          "$ref": "#/definitions/Exchange"
+        },
+        "currency": {
+          "$ref": "#/definitions/Currency"
+        }
+      },
+      "required": [
+        "currency",
+        "exchange",
+        "methodology",
+        "nearMidBook",
+        "nextMidBook",
+        "risklessRate",
+        "risklessRateAt",
+        "risklessRateSource",
+        "windowInterval"
+      ]
+    },
+    "MfivWindowInterval": {
+      "type": "string",
+      "enum": ["14d"]
+    },
+    "Exchange": {
+      "type": "string",
+      "enum": ["deribit"]
+    },
+    "Methodology": {
+      "type": "string",
+      "enum": ["mfiv"]
+    },
+    "Currency": {
+      "type": "string",
+      "enum": ["ETH"]
+    },
+    "MfivParams": {
+      "type": "object",
+      "properties": {
+        "at": {
+          "type": "string"
+        },
+        "nearDate": {
+          "type": "string"
+        },
+        "nextDate": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OptionSummary"
+          }
+        }
+      },
+      "required": ["at", "nearDate", "nextDate", "options"],
+      "additionalProperties": false
+    },
+    "OptionSummary": {
+      "type": "object",
+      "properties": {
+        "symbol": {
+          "type": "string"
+        },
+        "exchange": {
+          "$ref": "#/definitions/Exchange"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "optionType": {
+          "type": "string",
+          "enum": ["put", "call"]
+        },
+        "expirationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "strikePrice": {
+          "type": "number"
+        },
+        "bestBidPrice": {
+          "type": "number"
+        },
+        "bestAskPrice": {
+          "type": "number"
+        },
+        "markPrice": {
+          "type": "number"
+        },
+        "underlyingPrice": {
+          "type": "number"
+        }
+      },
+      "required": ["symbol", "exchange", "timestamp", "optionType", "expirationDate", "strikePrice"],
+      "additionalProperties": false
+    },
+    "MfivExtendedResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intermediates": {
+          "$ref": "#/definitions/MfivIntermediates"
+        },
+        "dVol": {
+          "type": "number"
+        },
+        "invdVol": {
+          "type": "number"
+        }
+      }
+    },
+    "MfivIntermediates": {
+      "type": "object",
+      "properties": {
+        "NT1": {
+          "type": "number"
+        },
+        "NT2": {
+          "type": "number"
+        },
+        "N14": {
+          "type": "number"
+        },
+        "N365": {
+          "type": "number"
+        },
+        "T1": {
+          "type": "number"
+        },
+        "T2": {
+          "type": "number"
+        },
+        "F1": {
+          "type": "number"
+        },
+        "F2": {
+          "type": "number"
+        },
+        "nearForwardStrike": {
+          "type": "number"
+        },
+        "nextForwardStrike": {
+          "type": "number"
+        },
+        "nearMid": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mid": {
+                "type": "number"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "exchange": {
+                "$ref": "#/definitions/Exchange"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "optionType": {
+                "type": "string",
+                "enum": ["put", "call"]
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "strikePrice": {
+                "type": "number"
+              },
+              "bestBidPrice": {
+                "type": "number"
+              },
+              "bestAskPrice": {
+                "type": "number"
+              },
+              "markPrice": {
+                "type": "number"
+              },
+              "underlyingPrice": {
+                "type": "number"
+              }
+            },
+            "required": ["exchange", "expirationDate", "optionType", "strikePrice", "symbol", "timestamp"]
+          }
+        },
+        "nextMid": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "mid": {
+                "type": "number"
+              },
+              "symbol": {
+                "type": "string"
+              },
+              "exchange": {
+                "$ref": "#/definitions/Exchange"
+              },
+              "timestamp": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "optionType": {
+                "type": "string",
+                "enum": ["put", "call"]
+              },
+              "expirationDate": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "strikePrice": {
+                "type": "number"
+              },
+              "bestBidPrice": {
+                "type": "number"
+              },
+              "bestAskPrice": {
+                "type": "number"
+              },
+              "markPrice": {
+                "type": "number"
+              },
+              "underlyingPrice": {
+                "type": "number"
+              }
+            },
+            "required": ["exchange", "expirationDate", "optionType", "strikePrice", "symbol", "timestamp"]
+          }
+        },
+        "nearContribution": {
+          "type": "number"
+        },
+        "nextContribution": {
+          "type": "number"
+        },
+        "nearModSigmaSquared": {
+          "type": "number"
+        },
+        "nextModSigmaSquared": {
+          "type": "number"
+        },
+        "A": {
+          "type": "number"
+        },
+        "B": {
+          "type": "number"
+        },
+        "C": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "NT1",
+        "NT2",
+        "N14",
+        "N365",
+        "T1",
+        "T2",
+        "F1",
+        "F2",
+        "nearForwardStrike",
+        "nextForwardStrike",
+        "nearMid",
+        "nextMid",
+        "nearContribution",
+        "nextContribution",
+        "nearModSigmaSquared",
+        "nextModSigmaSquared",
+        "A",
+        "B",
+        "C"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
