@@ -1,8 +1,11 @@
-import { MfivParams } from "../mfiv";
-import { Expiries } from "./mfivstep2";
+import { MfivContext, MfivParams } from "../mfiv";
+import { Expiries, MfivOptionSummary } from "../types";
+export interface MfivStepInput {
+    context: MfivContext;
+    params: MfivParams;
+    expiries?: Expiries<MfivOptionSummary>;
+}
 export declare class MfivStep1 {
-    private readonly params;
-    constructor(params: MfivParams);
-    run(): Expiries;
+    run(input: MfivStepInput): Expiries<MfivOptionSummary>;
 }
 //# sourceMappingURL=mfivstep1.d.ts.map

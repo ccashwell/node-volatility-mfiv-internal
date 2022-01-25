@@ -1,10 +1,14 @@
-import { MfivOptionSummary } from "../types";
-interface IOptionPair {
-    symbol: string;
-    strikePrice: number;
-    expirationDate: Date;
-    callOption: MfivOptionSummary | undefined;
-    putOption: MfivOptionSummary | undefined;
+import { OptionPrice, OptionSummary } from "../types";
+export interface OptionPair<T extends OptionSummary & OptionPrice> {
+    readonly baseSymbol: string;
+    readonly strikePrice: number;
+    readonly expirationDate: Date;
+    call?: T;
+    put?: T;
+    $call: number | undefined;
+    $put: number | undefined;
+    insert(option: T): OptionPair<T>;
+    diff(): number;
 }
 /**
  * Represents a pairing of a put and call option at the same strike and expiration.
@@ -12,41 +16,26 @@ interface IOptionPair {
  * The only guarantee is that either the call, put, or both are contained in an instance.
  * There are no requirements that an instance contains both a call and a put.
  */
-export declare class OptionPair implements IOptionPair {
-    symbol: string;
-    callOption: MfivOptionSummary | undefined;
-    putOption: MfivOptionSummary | undefined;
+export declare class BaseOptionPair<T extends OptionSummary & OptionPrice> implements OptionPair<T> {
+    baseSymbol: string;
     strikePrice: number;
     expirationDate: Date;
-    constructor({ symbol, strikePrice, expirationDate, callOption, putOption }: IOptionPair);
-    /**
-     * Call option getter/setter
-     *
-     * @returns MidBookItemCall
-     */
-    get call(): MfivOptionSummary | undefined;
-    set call(item: MfivOptionSummary | undefined);
-    /**
-     * Put option getter/setter
-     *
-     * @returns MidBookItemPut
-     */
-    get put(): MfivOptionSummary | undefined;
-    set put(item: MfivOptionSummary | undefined);
+    call?: T;
+    put?: T;
+    constructor(baseSymbol: string, strikePrice: number, expirationDate: Date);
+    insert(item: T): OptionPair<T>;
     /**
      * Get the call option's price
      *
      * @returns number | undefined
      */
-    get callPrice(): number | undefined;
+    get $call(): number | undefined;
     /**
      * Get the put option's mid price
      *
      * @returns number | undefined
      */
-    get putPrice(): number | undefined;
-    get hasCall(): boolean;
-    get hasPut(): boolean;
+    get $put(): number | undefined;
     /**
      * Compute the absolute difference
      *
@@ -54,5 +43,5 @@ export declare class OptionPair implements IOptionPair {
      */
     diff(): number;
 }
-export {};
+export declare const toMapOfOptionPair: <T extends OptionSummary & OptionPrice>(options: T[]) => Map<string, OptionPair<OptionSummary & OptionPrice>>;
 //# sourceMappingURL=optionpair.d.ts.map

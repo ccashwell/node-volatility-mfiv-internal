@@ -1,9 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.YEAR_IN_MILLISECONDS = exports.MFIV_WINDOW_INTERVALS = exports.METHODOLOGIES = exports.EXCHANGES = exports.CURRENCIES = exports.VERSIONS = void 0;
+exports.YEAR_IN_MILLISECONDS = exports.WEEK_IN_MILLISECONDS = exports.DAY_IN_MILLISECONDS = exports.HOUR_IN_MILLISECONDS = exports.MINUTE_IN_MILLISECONDS = exports.SECOND_IN_MILLISECONDS = exports.EVIDENCES = exports.MFIV_DURATIONS = exports.METHODOLOGIES = exports.EXCHANGES = exports.CURRENCIES = exports.VERSIONS = void 0;
 exports.VERSIONS = ["2022-01-01"];
 exports.CURRENCIES = ["ETH"];
 exports.EXCHANGES = ["deribit"];
 exports.METHODOLOGIES = ["mfiv"];
-exports.MFIV_WINDOW_INTERVALS = ["14d"];
-exports.YEAR_IN_MILLISECONDS = 365 * 24 * 60 * 60 * 1000;
+exports.MFIV_DURATIONS = ["14d"];
+exports.EVIDENCES = ["mfiv.estimate.evidence"];
+exports.SECOND_IN_MILLISECONDS = 1 * 1000;
+exports.MINUTE_IN_MILLISECONDS = 60 * exports.SECOND_IN_MILLISECONDS;
+exports.HOUR_IN_MILLISECONDS = 60 * exports.MINUTE_IN_MILLISECONDS;
+exports.DAY_IN_MILLISECONDS = 24 * exports.HOUR_IN_MILLISECONDS;
+exports.WEEK_IN_MILLISECONDS = 7 * exports.DAY_IN_MILLISECONDS;
+exports.YEAR_IN_MILLISECONDS = 365 * exports.DAY_IN_MILLISECONDS;

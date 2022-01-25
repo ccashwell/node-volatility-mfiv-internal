@@ -1,70 +1,87 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MfivStep1 = void 0;
-const railway_1 = require("@nozzlegear/railway");
 const transducist_1 = require("transducist");
-const mapper_1 = require("../models/mapper");
+const error_1 = require("../error");
 const optionpair_1 = require("../models/optionpair");
-const utils_1 = require("../utils");
 class MfivStep1 {
-    constructor(params) {
-        this.params = params;
-    }
-    run() {
-        const underlyingPrice = this.params.underlyingPrice;
-        const { nearDate, nextDate, options } = this.params;
-        const partitions = (0, railway_1.pipe)(options).chain(partitionByNearAndNext(nearDate, nextDate, underlyingPrice)).value();
-        const nearBook = partitions.nearBook;
-        const nextBook = partitions.nextBook;
-        const expiries = {
-            nearBook: nearBook,
-            nextBook: nextBook,
-            nearOptionMap: toOptionsMap(partitions.nearBook),
-            nextOptionMap: toOptionsMap(partitions.nextBook)
+    run(input) {
+        const { nearDate, nextDate, options, underlyingPrice } = input.params;
+        const partitions = (0, transducist_1.chainFrom)(options)
+            .map(ensureDefaults)
+            .filter(validOption)
+            .filter(isOneOf(nearDate, nextDate))
+            .map(chooseMidOrMark)
+            .map(convertTo(underlyingPrice))
+            .toObjectGroupBy(o => o.expirationDate.toISOString());
+        const nearBook = partitions[nearDate];
+        const nextBook = partitions[nextDate];
+        const nearOptionPairMap = (0, optionpair_1.toMapOfOptionPair)(nearBook);
+        const nextOptionPairMap = (0, optionpair_1.toMapOfOptionPair)(nextBook);
+        return {
+            nearBook,
+            nextBook,
+            nearOptionPairMap,
+            nextOptionPairMap
         };
-        return expiries;
     }
 }
 exports.MfivStep1 = MfivStep1;
-const isNearOrNext = (nearUnixDate, nextUnixDate) => {
-    return (o) => {
-        const expUnixMs = o.expirationDate.valueOf();
-        return expUnixMs === nearUnixDate || expUnixMs === nextUnixDate;
+const ensureDefaults = (o) => {
+    return {
+        ...o,
+        bestAskPrice: o.bestAskPrice ?? 0,
+        bestBidPrice: o.bestBidPrice ?? 0,
+        markPrice: o.markPrice ?? 0,
+        underlyingPrice: o.underlyingPrice ?? 0
     };
 };
-const hasValidBidPrice = (o) => {
-    return (0, utils_1.asNumberOrUndefined)(o.bestBidPrice) !== undefined;
+const validOption = (o) => o.bestBidPrice !== 0 && o.bestBidPrice !== undefined;
+const isOneOf = (...isoDateStrings) => {
+    const epochs = isoDateStrings.map(Date.parse);
+    return (o) => epochs.includes(o.expirationDate.valueOf());
 };
-const isNearOrNextAndHasBidPrice = (nearUnixDate, nextUnixDate) => {
-    const _isNearOrNext = isNearOrNext(nearUnixDate, nextUnixDate);
-    return (o) => _isNearOrNext(o) && hasValidBidPrice(o);
+const chooseMidOrMark = (o) => {
+    let midPrice = undefined;
+    const bestBidPrice = o.bestBidPrice, bestAskPrice = o.bestAskPrice, markPrice = o.markPrice;
+    if (bestBidPrice === 0) {
+        throw (0, error_1.insufficientData)("bestBidPrice missing");
+    }
+    else if (bestAskPrice === 0) {
+        return {
+            ...o,
+            midPrice: markPrice,
+            bestBidPrice,
+            bestAskPrice,
+            markPrice,
+            reason: "bestAskPrice missing",
+            source: "mark"
+        };
+    }
+    else {
+        midPrice = (bestAskPrice + bestBidPrice) / 2;
+        return midPrice >= 1.5 * markPrice
+            ? {
+                ...o,
+                midPrice: markPrice,
+                bestBidPrice,
+                bestAskPrice,
+                markPrice,
+                reason: "mid >= 1.5 * mark",
+                source: "mark"
+            }
+            : {
+                ...o,
+                midPrice: midPrice,
+                bestBidPrice,
+                bestAskPrice,
+                markPrice,
+                reason: "mid < 1.5 * mark",
+                source: "mid"
+            };
+    }
 };
-const partitionByNearAndNext = (nearIsoDateString, nextIsoDateString, underlyingPrice) => (options) => {
-    const nearDate = new Date(nearIsoDateString).valueOf();
-    const nextDate = new Date(nextIsoDateString).valueOf();
-    const partitions = (0, transducist_1.chainFrom)(options)
-        .filter(isNearOrNextAndHasBidPrice(nearDate, nextDate))
-        .map((0, mapper_1.optionSummaryToMfivOption)(underlyingPrice))
-        .toObjectGroupBy(o => o.expirationDate.toISOString());
-    return { nearBook: partitions[nearIsoDateString] ?? [], nextBook: partitions[nextIsoDateString] ?? [] };
-};
-const toOptionsMap = (options) => {
-    return options.reduce((acc, current) => {
-        const symbolRoot = current.symbol.slice(0, -2);
-        const pair = acc.get(symbolRoot) ??
-            new optionpair_1.OptionPair({
-                symbol: current.symbol,
-                strikePrice: current.strikePrice,
-                expirationDate: current.expirationDate,
-                callOption: undefined,
-                putOption: undefined
-            });
-        if (current.optionType == "call") {
-            pair.call = current;
-        }
-        else {
-            pair.put = current;
-        }
-        return acc.set(symbolRoot, pair);
-    }, new Map());
+const convertTo = (underlyingPrice) => (o) => {
+    const optionPrice = o.midPrice * underlyingPrice;
+    return { ...o, optionPrice };
 };
