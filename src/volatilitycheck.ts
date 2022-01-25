@@ -1,6 +1,6 @@
 import { unsupportedMethodology } from "./error"
-import { MfivExample, compute } from "./mfiv"
-import { Context, Params } from "./types"
+import { compute } from "./mfiv"
+import { Context, Params, MfivEvidence, MfivResult } from "./types"
 
 export class VolatilityCheck {
   /**
@@ -14,19 +14,20 @@ export class VolatilityCheck {
    * @throws unsupportedMethodology
    * This exception is thrown when the example contains an unsupported methodology.
    *
-   * @public
    */
-  public isValid(example: MfivExample) {
-    return this._isValid(example)
+  static isValid(example: MfivEvidence): boolean {
+    return VolatilityCheck.check(example).isSuccess
   }
 
-  private _isValid(example: MfivExample) {
+  static check(example: MfivEvidence): { isSuccess: boolean; result: MfivResult } {
+    const evidenceResult = example.result
+    const compare = (result: MfivResult) =>
+      result.dVol === evidenceResult.dVol && result.invdVol === evidenceResult.invdVol
     const result = this._compute({ ...example.context }, example.params)
-    const { dVol, invdVol } = result
-    return dVol === example.result.dVol && invdVol === example.result.invdVol
+    return { isSuccess: compare(result), result: result }
   }
 
-  private _compute(ctx: Context, params: Params) {
+  private static _compute(ctx: Context, params: Params) {
     switch (ctx.methodology) {
       case "mfiv": {
         return compute(ctx, params)

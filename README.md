@@ -39,15 +39,14 @@ This bash script has a dependency of `jq` for pretty printing but feel free to m
 
 ```
 #
-# Usage: fetch_fleek 2021-10-01 07:05:00
+# Usage: fetch_fleek 2021-01-25 03:30:00
+# Timestamps are always in GMT
 # Requires 'jq' to be installed -- "brew install jq" (https://stedolan.github.io/jq/download/)
 #
 fetch_fleek() {
-    local input_date="$1"
-    local input_time="$2"
-    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S" "$1 $2" +%s000)
+    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S %Z" "$1 $2 GMT" +%s000)
     set -o pipefail # Set pipefail option so if curl fails the script will stop
-    if ! curl --silent -L "https://storageapi.fleek.co/volatilitycom-bucket/MFIV/ETH/14DAY/MFIV_$timestamp.json" | jq .; then
+    if ! curl --silent -L "https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json" | jq .; then
         echo "Command exited with code $?"
     fi
     set +o pipefail
@@ -57,7 +56,7 @@ fetch_fleek() {
 Here's an example of fetching data and writing it to a file:
 
 ```
-$ fetch_fleek 2021-10-01 07:05:00 2>&1 | tee ipfs.json
+$ fetch_fleek 2022-01-25 03:30:00 2>&1 | tee ipfs.json 
 ```
 
 **Programatically Create URL**
@@ -69,11 +68,9 @@ The following script will make a header request to `fleek` to get the IPFS hash 
 # Requires 'jq' to be installed -- "brew install jq" (https://stedolan.github.io/jq/download/)
 #
 fetch_ipfs() {
-    local input_date="$1"
-    local input_time="$2"
-    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S" "$1 $2" +%s000)
+    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S %Z" "$1 $2 GMT" +%s000)
     set -o pipefail # Set pipefail option so if curl fails the script will stop
-    if ! curl -L -sI "https://storageapi.fleek.co/volatilitycom-bucket/MFIV/ETH/14DAY/MFIV_$timestamp.json" | tr -d '\r' | awk 'BEGIN {FS=": "}/^etag/{printf $2}' | tr -d '"' | awk '{printf "https://ipfs.io/ipfs/%s\n", $1}'; then
+    if ! curl -L -sI "https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json" | tr -d '\r' | awk 'BEGIN {FS=": "}/^etag/{printf $2}' | tr -d '"' | awk '{printf "https://ipfs.io/ipfs/%s\n", $1}'; then
         echo "Command exited with code $?"
     fi
     set +o pipefail
@@ -83,13 +80,13 @@ fetch_ipfs() {
 Here's an example of fetching the URL:
 
 ```
-$ fetch_ipfs 2021-10-01 07:05:00
+$ fetch_ipfs 2022-01-25 03:30:00
 ```
 
 Here's an example output URL. Notice it uses the IPFShash.
 
 ```
-https://ipfs.io/ipfs/bafybeihmvk6h7g54cnte5peakpq2vzepp4ywibmgsvzuk2iyth2iqfk2u4
+https://ipfs.io/ipfs/bafybeidhr2gcvozyznhabmubgmuwupzxvcetyfkpn5r7kvsq5alblrrlhi
 ```
 
 **Manually Create URL**
@@ -102,18 +99,18 @@ Or you can download the data by:
 
 `$ Curl https://ipfs.io/ipfs/<IPFShash>`
 
-If you do not have the `<IPFShash>` you can create the URL with the following URL by chaning `$timestamp`:
+If you do not have the `<IPFShash>` you can create the URL with the following URL by changing `$timestamp`:
 
-`https://storageapi.fleek.co/volatilitycom-bucket/MFIV/ETH/14DAY/MFIV_$timestamp.json`
+`https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json`
 
 Where
 
-- `$timestamp` - is written as the date/time in MS (ISO8106). You can use this free tool to convert a UTC date/time to the proper format: `https://currentmillis.com/`.
+- `$timestamp` - is written as the date/time in MS (ISO8106). You can use this free tool to convert a UTC date/time to the proper format: [https://currentmillis.com/](https://currentmillis.com/).
 
-Here's an example URL for 2021-10-01 07:05:00 UTC:
+Here's an example URL for 2022-01-25 03:30:00 GMT:
 
 ```
-https://storageapi.fleek.co/volatilitycom-bucket/MFIV/ETH/14DAY/MFIV_1633071900000.json
+https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=1643081400000/evidence.json
 ```
 
 ## Verifying an Index
@@ -140,7 +137,9 @@ This code is currently being developed with node v16.13.1 using nvm.
 $ git clone https://github.com/VolatilityGroup/node-volatility-mfiv.git
 $ cd node-volatility-mfiv
 $ npm install
-$ npm run test
+$ npm run build
+$ npm test
+$ npm run example
 ```
 
 ## Links

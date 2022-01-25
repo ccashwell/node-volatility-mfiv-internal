@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-//import helpers from "yargs/helpers"
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import chalk from 'chalk'
 import emoji from 'node-emoji'
 import yargs from 'yargs'
@@ -28,6 +29,8 @@ let argv = yargs(process.argv.slice(2))
       if (!argv.s && !argv.f && !argv.e) throw new Error(chalk.red('You must provide either -e or -s or -f'))
       return true
     })
+    .describe('v', 'show verbose output of check')
+    .alias('v', 'verbose')
     .help('h')
     .alias('h', 'help')
     .epilog('For more information, visit https://github.com/VolatilityGroup/node-volatility-mfiv')
@@ -58,7 +61,19 @@ if (argv.e) {
 
 console.info(emoji.get("rocket"), `check ${uri}`)
 
-if (new VolatilityCheck().isValid(example)) {
+const isVerbose = argv.v
+const result = VolatilityCheck.check(example)
+
+if (isVerbose) {
+  console.info("%j", {
+    version: example.version,
+    context: example.context,
+    params: example.params,
+    result: result.result
+  })
+}
+
+if (result.isSuccess) {
   console.info(emoji.get("white_check_mark"), chalk.greenBright("File valid."))
 } else {
   console.error(emoji.get("skull_and_crossbones"), chalk.redBright("File validation failed."))

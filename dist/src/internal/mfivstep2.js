@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MfivStep2 = void 0;
 const tslib_1 = require("tslib");
 const dayjs_1 = (0, tslib_1.__importDefault)(require("dayjs"));
+const duration_1 = (0, tslib_1.__importDefault)(require("dayjs/plugin/duration"));
 const constants_1 = require("../constants");
 const error_1 = require("../error");
+dayjs_1.default.extend(duration_1.default);
 /**
  * Step 2 of the MFIV calculation
  *
@@ -18,57 +20,52 @@ class MfivStep2 {
      *
      * @param ctx - Context object containing the R and T values for step 2b
      * @param params - MfivParams object
-     * @param optionExpiries - a hash partitioned into near and next expiries
-     * @param optionsMap - a map from an option pair (common by strikePrice and expiration)
-     *                      identifier and a [call, put] option tuple
+     * @param expiries - options partitioned into near and next expiries
      */
-    constructor(ctx, params, expiries) {
-        this.ctx = ctx;
-        this.params = params;
-        this.expiries = expiries;
-        this.nowMs = dayjs_1.default.utc(params.at).valueOf();
-        this.underlyingPrice = params.underlyingPrice;
-    }
-    run() {
-        const nearPairs = Array.from(this.expiries.nearOptionMap.values());
-        const nextPairs = Array.from(this.expiries.nextOptionMap.values());
-        const NT1 = Date.parse(this.params.nearDate) - this.nowMs;
-        const NT2 = Date.parse(this.params.nextDate) - this.nowMs;
+    run({ context, params, expiries }) {
+        const risklessRate = context.risklessRate;
+        const nowEpoch = Date.parse(params.at);
+        const forwardLevelOptions = { risklessRate, nowEpoch };
+        const nearPairs = Array.from(expiries.nearOptionPairMap.values());
+        const nextPairs = Array.from(expiries.nextOptionPairMap.values());
+        const NT1 = Date.parse(params.nearDate) - nowEpoch;
+        const NT2 = Date.parse(params.nextDate) - nowEpoch;
         const N14 = dayjs_1.default.duration({ weeks: 2 }).asMilliseconds();
         const N365 = dayjs_1.default.duration({ years: 1 }).asMilliseconds();
         const T1 = NT1 / N365;
         const T2 = NT2 / N365;
         const FS1 = this.forwardStrike(nearPairs);
         const FS2 = this.forwardStrike(nextPairs);
-        const F1 = this.forwardLevel(FS1);
-        const F2 = this.forwardLevel(FS2);
-        const nearForwardStrike = this.atTheMoneyStrikePrice(this.expiries.nearBook, F1);
-        const nextForwardStrike = this.atTheMoneyStrikePrice(this.expiries.nextBook, F2);
-        const nearFinalBook = finalBookGet(this.expiries.nearBook, nearForwardStrike);
-        const nextFinalBook = finalBookGet(this.expiries.nextBook, nextForwardStrike);
+        const F1 = this.forwardLevel(forwardLevelOptions, FS1);
+        const F2 = this.forwardLevel(forwardLevelOptions, FS2);
+        const nearForwardStrike = this.atTheMoneyStrikePrice(expiries.nearBook, F1);
+        const nextForwardStrike = this.atTheMoneyStrikePrice(expiries.nextBook, F2);
+        const nearFinalBook = finalBookGet(expiries.nearBook, nearForwardStrike);
+        const nextFinalBook = finalBookGet(expiries.nextBook, nextForwardStrike);
         const nearContribution = contributionGet(nearFinalBook);
         const nextContribution = contributionGet(nextFinalBook);
-        const nearModSigmaSquared = Math.E ** (this.ctx.risklessRate * T1) * 2 * nearContribution - (F1 / nearForwardStrike - 1) ** 2;
-        const nextModSigmaSquared = Math.E ** (this.ctx.risklessRate * T2) * 2 * nextContribution - (F2 / nextForwardStrike - 1) ** 2;
-        const intermediates = {
+        const nearModSigmaSquared = Math.E ** (risklessRate * T1) * 2 * nearContribution - (F1 / nearForwardStrike - 1) ** 2;
+        const nextModSigmaSquared = Math.E ** (risklessRate * T2) * 2 * nextContribution - (F2 / nextForwardStrike - 1) ** 2;
+        return {
+            finalNearBook: nearFinalBook,
+            finalNextBook: nextFinalBook,
             NT1,
             NT2,
             N14,
             N365,
             T1,
             T2,
+            FS1: FS1.strikePrice,
+            FS2: FS2.strikePrice,
             F1,
             F2,
             nearForwardStrike,
             nextForwardStrike,
-            nearOptions: this.expiries.nearBook,
-            nextOptions: this.expiries.nextBook,
             nearContribution,
             nextContribution,
             nearModSigmaSquared,
             nextModSigmaSquared
         };
-        return intermediates;
     }
     /**
      * (step 2a) Determine the forward strike K*
@@ -93,19 +90,17 @@ class MfivStep2 {
      *
      * @returns number
      */
-    forwardLevel(forwardStrike) {
-        // console.log("forwardLevel fs", forwardStrike)
+    forwardLevel({ risklessRate, nowEpoch }, forwardStrike) {
         // forward strike price
         const kStar = forwardStrike.strikePrice;
         // price for the call option with strike K∗
-        const cStar = forwardStrike.callPrice;
+        const cStar = forwardStrike.$call;
         // price for the put options with strike K∗
-        const pStar = forwardStrike.putPrice;
+        const pStar = forwardStrike.$put;
         // annual risk-free interest rate.
-        const R = this.ctx.risklessRate;
+        const R = risklessRate;
         // time to expiration in years
-        const T = (forwardStrike.expirationDate.valueOf() - this.nowMs) / constants_1.YEAR_IN_MILLISECONDS;
-        //console.log("forwardLevel", [kStar, cStar, pStar, R, T])
+        const T = (forwardStrike.expirationDate.valueOf() - nowEpoch) / constants_1.YEAR_IN_MILLISECONDS;
         return kStar + Math.E ** (R * T) * (cStar - pStar);
     }
     /**
@@ -116,7 +111,6 @@ class MfivStep2 {
      * @returns number
      */
     atTheMoneyStrikePrice(options, forwardLevelPrice) {
-        // console.log("adjacentStrikeGet", [forwardLevelPrice])
         return options.reduce((adjacentStrike, current) => {
             if (current.strikePrice <= forwardLevelPrice && current.strikePrice > adjacentStrike) {
                 adjacentStrike = current.strikePrice;
@@ -133,11 +127,14 @@ class MfivStep2 {
     strikeWithSmallestDiff(optionPairs) {
         return optionPairs.reduce((previous, current) => {
             const cDiff = current.diff(), pDiff = previous.diff();
-            if (cDiff && pDiff) {
-                return cDiff < pDiff ? current : previous;
+            if (isNaN(pDiff) && !isNaN(cDiff)) {
+                return current;
+            }
+            else if (pDiff && isNaN(cDiff)) {
+                return previous;
             }
             else {
-                return previous;
+                return pDiff < cDiff ? previous : current;
             }
         });
     }
@@ -161,7 +158,7 @@ const finalBookGet = (entries, targetStrike) => {
     // add to the list the average of the call and put prices at the strike
     const avgOption = {
         ...final.avg[0][1],
-        price: (final.avg[0][1].price + final.avg[1][1].price) / 2
+        optionPrice: (final.avg[0][1].optionPrice + final.avg[1][1].optionPrice) / 2
     };
     final.book.push([avgOption.symbol + "AV", avgOption]);
     // sort by strike price
@@ -174,7 +171,7 @@ const contributionGet = (finalBook) => {
     let contribution = 0;
     finalBook.forEach((value, idx, arr) => {
         thisStrike = Number(value[1].strikePrice);
-        thisPrice = value[1].price;
+        thisPrice = value[1].optionPrice ?? 0;
         if (idx === 0) {
             nextStrike = Number(arr[idx + 1][1].strikePrice);
             deltaK = nextStrike - thisStrike;

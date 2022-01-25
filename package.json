@@ -1,6 +1,6 @@
 {
   "name": "node-volatility-mfiv",
-  "version": "0.10.3",
+  "version": "0.17.0",
   "description": "Lorem Ipsum",
   "main": "./dist/src/index.js",
   "source": "src/index.ts",

@@ -39,13 +39,9 @@ module.exports = {
   plugins: ["import", "prettier", "@typescript-eslint", "promise"],
   ignorePatterns: ["src/volatilityIndex.js"],
   rules: {
-    // indent: ["error", 2, { SwitchCase: 1 }],
-    // quotes: ["warn", "double"],
-    // semi: ["error", "never"],
     "no-var": ["error"],
     "no-console": ["off"],
     "no-unused-vars": ["off"],
-    // "no-mixed-spaces-and-tabs": ["warn"],
     "@typescript-eslint/await-thenable": ["error"],
     "@typescript-eslint/no-floating-promises": ["error"],
     "@typescript-eslint/no-unused-vars": ["warn"],

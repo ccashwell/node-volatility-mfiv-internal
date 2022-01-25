@@ -1,6 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Types = void 0;
 const tslib_1 = require("tslib");
-const Types = (0, tslib_1.__importStar)(require("./types"));
-exports.Types = Types;
+(0, tslib_1.__exportStar)(require("./mfiv"), exports);
+(0, tslib_1.__exportStar)(require("./types"), exports);
+// import { MfivContext, MfivParams, MfivResult, MfivIntermediates } from "./mfiv"
+// import * as Types from "./types"
+// export declare function compute(ctx: MfivContext, params: MfivParams): MfivResult
+// export { Types, MfivContext, MfivParams, MfivResult, MfivIntermediates }

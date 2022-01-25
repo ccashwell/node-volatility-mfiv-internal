@@ -1,22 +1,19 @@
-import { MfivContext, MfivParams } from "../mfiv";
-import { MfivStep2Intermediates } from "./mfivstep2";
+import { MfivStep2Terms } from "../types";
+import { MfivStepInput } from "./mfivstep1";
 /**
- * Take the weighted average of the values σ12 and σ2 obtained in Step2 for the
+ * Take the weighted average of the values σ1 and σ2 obtained in Step2 for the
  * near-expiration options and the next-expiration options and compute IV
  */
 export declare class MfivStep3 {
-    private ctx;
-    private params;
-    private options;
-    private readonly nowMs;
-    constructor(ctx: MfivContext, params: MfivParams, options: {
-        intermediates: MfivStep2Intermediates;
-    });
-    run(): {
+    run({ step2Terms }: MfivStepInput & {
+        step2Terms: MfivStep2Terms;
+    }): {
         intermediates: {
             A: number;
             B: number;
             C: number;
+            finalNearBook: [string, import("../types").MfivOptionSummary][];
+            finalNextBook: [string, import("../types").MfivOptionSummary][];
             NT1: number;
             NT2: number;
             N14: number;
@@ -27,8 +24,6 @@ export declare class MfivStep3 {
             F2: number;
             nearForwardStrike: number;
             nextForwardStrike: number;
-            nearOptions: import("../types").MfivOptionSummary[];
-            nextOptions: import("../types").MfivOptionSummary[];
             nearContribution: number;
             nextContribution: number;
             nearModSigmaSquared: number;
@@ -36,6 +31,7 @@ export declare class MfivStep3 {
         };
         dVol: number;
         invdVol: number;
+        value: number;
     };
 }
 //# sourceMappingURL=mfivstep3.d.ts.map

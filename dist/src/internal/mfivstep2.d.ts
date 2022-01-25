@@ -1,6 +1,7 @@
-import { MfivContext, MfivParams } from "../mfiv";
+import { MfivOptionPair } from "../models/mfivoptionpair";
 import { OptionPair } from "../models/optionpair";
-import { MfivOptionSummary, OptionPairMap } from "../types";
+import { Expiries, MfivOptionSummary, MfivStep2Terms } from "../types";
+import { MfivStepInput } from "./mfivstep1";
 /**
  * Step 2 of the MFIV calculation
  *
@@ -10,21 +11,15 @@ import { MfivOptionSummary, OptionPairMap } from "../types";
  *
  */
 export declare class MfivStep2 {
-    private readonly ctx;
-    private readonly params;
-    private expiries;
-    private readonly nowMs;
-    private readonly underlyingPrice;
     /**
      *
      * @param ctx - Context object containing the R and T values for step 2b
      * @param params - MfivParams object
-     * @param optionExpiries - a hash partitioned into near and next expiries
-     * @param optionsMap - a map from an option pair (common by strikePrice and expiration)
-     *                      identifier and a [call, put] option tuple
+     * @param expiries - options partitioned into near and next expiries
      */
-    constructor(ctx: MfivContext, params: MfivParams, expiries: Expiries);
-    run(): MfivStep2Intermediates;
+    run({ context, params, expiries }: MfivStepInput & {
+        expiries: Expiries<MfivOptionSummary>;
+    }): MfivStep2Terms;
     /**
      * (step 2a) Determine the forward strike K*
      *
@@ -36,13 +31,16 @@ export declare class MfivStep2 {
      *
      * @throws {@link Failure<VolatilityError.InsufficientData>}
      */
-    forwardStrike(options: OptionPair[]): OptionPair;
+    forwardStrike(options: OptionPair<MfivOptionSummary>[]): MfivOptionPair;
     /**
      * (step 2b) Determine the forward level: F = K* + e^(RT) ∙ (C* - P*)
      *
      * @returns number
      */
-    forwardLevel(forwardStrike: OptionPair): number;
+    forwardLevel({ risklessRate, nowEpoch }: {
+        risklessRate: number;
+        nowEpoch: number;
+    }, forwardStrike: MfivOptionPair): number;
     /**
      * (step 2c) Determine at-the-money strike price K0.
      *
@@ -59,28 +57,4 @@ export declare class MfivStep2 {
      */
     private strikeWithSmallestDiff;
 }
-export declare type Expiries = {
-    nearOptionMap: OptionPairMap;
-    nextOptionMap: OptionPairMap;
-    nearBook: MfivOptionSummary[];
-    nextBook: MfivOptionSummary[];
-};
-export declare type MfivStep2Intermediates = {
-    NT1: number;
-    NT2: number;
-    N14: number;
-    N365: number;
-    T1: number;
-    T2: number;
-    F1: number;
-    F2: number;
-    nearForwardStrike: number;
-    nextForwardStrike: number;
-    nearOptions: MfivOptionSummary[];
-    nextOptions: MfivOptionSummary[];
-    nearContribution: number;
-    nextContribution: number;
-    nearModSigmaSquared: number;
-    nextModSigmaSquared: number;
-};
 //# sourceMappingURL=mfivstep2.d.ts.map

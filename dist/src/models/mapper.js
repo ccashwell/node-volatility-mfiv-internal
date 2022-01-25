@@ -7,7 +7,7 @@ const optionSummaryToMfivOption = (underlyingPrice) => (optionSummary) => {
     const midOrMark = (0, exports.midOrMarkPrice)({ bestAskPrice, bestBidPrice, markPrice });
     const { mfivPrice, midPrice, reason, source } = midOrMark;
     return {
-        price: underlyingPrice * mfivPrice,
+        optionPrice: underlyingPrice * mfivPrice,
         mfivPrice,
         midPrice,
         reason,

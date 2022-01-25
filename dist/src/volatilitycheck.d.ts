@@ -1,4 +1,4 @@
-import { MfivExample } from "./mfiv";
+import { MfivEvidence, MfivResult } from "./types";
 export declare class VolatilityCheck {
     /**
      * Returns whether or not the given mfiv inputs match an expected result by
@@ -11,10 +11,12 @@ export declare class VolatilityCheck {
      * @throws unsupportedMethodology
      * This exception is thrown when the example contains an unsupported methodology.
      *
-     * @public
      */
-    isValid(example: MfivExample): boolean;
-    private _isValid;
-    private _compute;
+    static isValid(example: MfivEvidence): boolean;
+    static check(example: MfivEvidence): {
+        isSuccess: boolean;
+        result: MfivResult;
+    };
+    private static _compute;
 }
 //# sourceMappingURL=volatilitycheck.d.ts.map
