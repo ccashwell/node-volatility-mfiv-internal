@@ -1,11 +1,16 @@
-import { MfivOptionSummary } from "../types"
+import { OptionPrice, OptionSummary } from "../types"
 
-interface IOptionPair {
-  symbol: string
-  strikePrice: number
-  expirationDate: Date
-  callOption: MfivOptionSummary | undefined
-  putOption: MfivOptionSummary | undefined
+export interface OptionPair<T extends OptionSummary & OptionPrice> {
+  readonly baseSymbol: string
+  readonly strikePrice: number
+  readonly expirationDate: Date
+  call?: T
+  put?: T
+  $call: number | undefined
+  $put: number | undefined
+
+  insert(option: T): OptionPair<T>
+  diff(): number
 }
 
 /**
@@ -14,43 +19,16 @@ interface IOptionPair {
  * The only guarantee is that either the call, put, or both are contained in an instance.
  * There are no requirements that an instance contains both a call and a put.
  */
-export class OptionPair implements IOptionPair {
-  symbol: string
-  callOption: MfivOptionSummary | undefined
-  putOption: MfivOptionSummary | undefined
-  strikePrice: number
-  expirationDate: Date
+// export class BaseOptionPair<T extends OptionSummary & OptionPrice> implements OptionPair<T> {
+export class BaseOptionPair<T extends OptionSummary & OptionPrice> implements OptionPair<T> {
+  call?: T
+  put?: T
 
-  constructor({ symbol, strikePrice, expirationDate, callOption = undefined, putOption = undefined }: IOptionPair) {
-    this.symbol = symbol
-    this.callOption = callOption
-    this.putOption = putOption
-    this.strikePrice = strikePrice
-    this.expirationDate = expirationDate
-  }
+  constructor(public baseSymbol: string, public strikePrice: number, public expirationDate: Date) {}
 
-  /**
-   * Call option getter/setter
-   *
-   * @returns MidBookItemCall
-   */
-  get call(): MfivOptionSummary | undefined {
-    return this.callOption
-  }
-  set call(item: MfivOptionSummary | undefined) {
-    this.callOption = item
-  }
-
-  /**
-   * Put option getter/setter
-   *
-   * @returns MidBookItemPut
-   */
-  get put(): MfivOptionSummary | undefined {
-    return this.putOption
-  }
-  set put(item: MfivOptionSummary | undefined) {
-    this.putOption = item
+  insert(item: T): OptionPair<T> {
+    item.optionType == "call" ? (this.call = item) : (this.put = item)
+    return this
   }
 
   /**
@@ -58,8 +36,8 @@ export class OptionPair implements IOptionPair {
    *
    * @returns number | undefined
    */
-  get callPrice() {
-    return this.call?.mfivPrice
+  get $call() {
+    return this.call?.optionPrice
   }
 
   /**
@@ -67,26 +45,42 @@ export class OptionPair implements IOptionPair {
    *
    * @returns number | undefined
    */
-  get putPrice() {
-    return this.put?.mfivPrice
+  get $put() {
+    return this.put?.optionPrice
   }
 
-  get hasCall() {
-    return !!this.call
-  }
-  get hasPut() {
-    return !!this.put
-  }
   /**
    * Compute the absolute difference
    *
    * @returns number | NaN
    */
   diff() {
-    if (this.callPrice && this.putPrice) {
-      return Math.abs(this.callPrice - this.putPrice)
+    if (this.$call && this.$put) {
+      return Math.abs(this.$call - this.$put)
     }
 
     return NaN
   }
 }
+
+export const toMapOfOptionPair = <T extends OptionSummary & OptionPrice>(options: T[]) => {
+  return options.reduce((acc, current) => {
+    const baseSymbol = makeMapKey(current)
+    const { strikePrice, expirationDate } = current
+    const optionPair = acc.get(baseSymbol) ?? new BaseOptionPair<T>(baseSymbol, strikePrice, expirationDate)
+
+    optionPair.insert(current)
+
+    return acc.set(baseSymbol, optionPair)
+  }, newOptionPairMap())
+}
+
+/**
+ * Take the instrument's symbol and strip off the call/put designator so it can be used as
+ * a key to call and put options.
+ *
+ * @param o OptionSummary that will have the '-C' or '-P' stripped out of the name
+ * @returns string - lacking any designation of call or put
+ */
+const makeMapKey = (o: OptionSummary) => o.symbol.slice(0, -2)
+const newOptionPairMap = <T extends OptionSummary & OptionPrice>() => new Map<string, OptionPair<T>>()

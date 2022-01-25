@@ -1,14 +1,10 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { pipe } from "@nozzlegear/railway"
-import dayjs from "dayjs"
-import duration from "dayjs/plugin/duration"
-import { MFIV_WINDOW_INTERVALS } from "./constants"
 import { debug } from "./debug"
-import { MfivStep1 } from "./internal/mfivstep1"
-import { Expiries, MfivStep2, MfivStep2Intermediates } from "./internal/mfivstep2"
+import { MfivStep1, MfivStepInput } from "./internal/mfivstep1"
+import { MfivStep2 } from "./internal/mfivstep2"
 import { MfivStep3 } from "./internal/mfivstep3"
-import { BaseContext, IndexResult, MethodologyExample, MfivOptionSummary, OptionSummary } from "./types"
-
-dayjs.extend(duration)
+import { BaseContext, MfivDuration, MfivEstimate, MfivResult, MfivResultWithInverse, OptionSummary } from "./types"
 
 /**
  * Compute the volatility index value for the given mfiv context and model parameters
@@ -17,23 +13,43 @@ dayjs.extend(duration)
  * @param params Inputs for calculating the index
  * @returns a result object containing the index value and its intermediates
  */
-export function compute(ctx: MfivContext, params: MfivParams) {
-  debug("compute %s-%s-%s @ %s", ctx.methodology, ctx.currency, ctx.windowInterval, params.at)
+export function compute(context: MfivContext, params: MfivParams) {
+  debug("compute %s-%s-%s @ %s", context.methodology, context.currency, context.windowInterval, params.at)
+  const step1 = new MfivStep1()
+  const step2 = new MfivStep2()
+  const step3 = new MfivStep3()
+  const input = { context, params }
 
-  const step1 = () => new MfivStep1(params).run()
-  const step2 = (expiries: Expiries): MfivStep2Intermediates => new MfivStep2(ctx, params, expiries).run()
-  const step3 = (intermediates: MfivStep2Intermediates) =>
-    new MfivStep3(ctx, params, { intermediates: intermediates }).run()
-
-  return pipe(step1()).chain(step2).chain(step3).value()
+  return pipe(input)
+    .chain(r => step1.run(r))
+    .chain(r => step2.run({ ...input, expiries: r }))
+    .chain(r => step3.run({ ...input, step2Terms: r }))
+    .chain(r => produceResult({ ...input, ...r }))
+    .value()
 }
 
-export type MfivExample = MethodologyExample<"2022-01-01", MfivContext, MfivParams, MfivResult>
-
-export type MfivWindowInterval = typeof MFIV_WINDOW_INTERVALS[number]
+const produceResult = ({
+  context,
+  params,
+  intermediates,
+  dVol,
+  invdVol,
+  value
+}: MfivStepInput & MfivResultWithInverse & MfivEstimate): MfivResult => {
+  return {
+    methodology: context.methodology,
+    currency: context.currency,
+    estimatedFor: params.at,
+    dVol,
+    invdVol,
+    value,
+    intermediates,
+    metrics: []
+  }
+}
 
 export type MfivContext = BaseContext & {
-  readonly windowInterval: MfivWindowInterval
+  readonly windowInterval: MfivDuration
   readonly risklessRate: number
   readonly risklessRateAt: string
   readonly risklessRateSource: string
@@ -48,32 +64,6 @@ export type MfivParams = {
   nextDate: string
   /** Options having an expiration matching nearDate OR nextDate  */
   options: Array<OptionSummary>
-  /** Keep a fixed underlying price */
+  /** Use a fixed underlying price */
   underlyingPrice: number
-}
-
-export type MfivIntermediates = {
-  NT1: number
-  NT2: number
-  N14: number
-  N365: number
-  T1: number
-  T2: number
-  F1: number
-  F2: number
-  nearForwardStrike: number
-  nextForwardStrike: number
-  nearMid: MfivOptionSummary[]
-  nextMid: MfivOptionSummary[]
-  nearContribution: number
-  nextContribution: number
-  nearModSigmaSquared: number
-  nextModSigmaSquared: number
-  A: number
-  B: number
-  C: number
-}
-
-export type MfivResult = IndexResult & {
-  intermediates?: MfivIntermediates
 }

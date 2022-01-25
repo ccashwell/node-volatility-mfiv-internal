@@ -15,17 +15,17 @@ class VolatilityCheck {
      * @throws unsupportedMethodology
      * This exception is thrown when the example contains an unsupported methodology.
      *
-     * @public
      */
-    isValid(example) {
-        return this._isValid(example);
+    static isValid(example) {
+        return VolatilityCheck.check(example).isSuccess;
     }
-    _isValid(example) {
+    static check(example) {
+        const evidenceResult = example.result;
+        const compare = (result) => result.dVol === evidenceResult.dVol && result.invdVol === evidenceResult.invdVol;
         const result = this._compute({ ...example.context }, example.params);
-        const { dVol, invdVol } = result;
-        return dVol === example.result.dVol && invdVol === example.result.invdVol;
+        return { isSuccess: compare(result), result: result };
     }
-    _compute(ctx, params) {
+    static _compute(ctx, params) {
         switch (ctx.methodology) {
             case "mfiv": {
                 return (0, mfiv_1.compute)(ctx, params);
