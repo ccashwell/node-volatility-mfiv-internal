@@ -16,7 +16,7 @@ $ npm run example
 In the terminal you should see the following:
 
 ```
-🚀 check eth-mfiv-14d-2021-10-01T07:02:00.000Z
+🚀 check eth-mfiv-14d-2022-01-27T01:00:00.000Z
 ✅ File valid.
 ```
 
@@ -27,7 +27,7 @@ There are two ways you can easily access the IPFS data:
 1. Programatically Create IPFS JSON file.
 2. Access the IPFS data via a URL and download the data as a JSON.
 
-Currently, IPFS is being written every 5 minutes on the hour so you MUST enter a time in 5-minute increments UTC (e.g. "07:00", "07:05", "07:10", etc.). Otherwise, you will get a file not found error, or you will generate a URL that gives a 404.
+Currently, IPFS is being written every 5 minutes on the hour so you MUST enter a time in 5-minute increments UTC (e.g. "07:00", "07:05", "07:10", etc.). Time is in 24-hour format (e.g. 3pm = 15:00:00, 9:30pm = 21:30:00). Otherwise, you will get a file not found error, or you will generate a URL that gives a 404.
 
 **Programatically Create IPFS JSON file**
 
@@ -35,12 +35,12 @@ This bash script has a dependency of `jq` for pretty printing but feel free to m
 
 ```
 #
-# Usage: fetch_fleek 2021-01-25 03:30:00
+# Usage: fetch_fleek 2022-01-27 01:00:00
 # Timestamps are always in GMT
 # Requires 'jq' to be installed -- "brew install jq" (https://stedolan.github.io/jq/download/)
 #
 fetch_fleek() {
-    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S %Z" "$1 $2 GMT" +%s000)
+	local timestamp="${1}T${2}Z"
     set -o pipefail # Set pipefail option so if curl fails the script will stop
     if ! curl --silent -L "https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json" | jq .; then
         echo "Command exited with code $?"
@@ -52,7 +52,7 @@ fetch_fleek() {
 Here's an example of fetching data and writing it to a file:
 
 ```
-$ fetch_fleek 2022-01-25 03:30:00 2>&1 | tee ipfs.json
+$ fetch_fleek 2022-01-27 01:00:00 2>&1 | tee ipfs.json
 ```
 
 **Programatically Create URL**
@@ -64,7 +64,7 @@ The following script will make a header request to `fleek` to get the IPFS hash 
 # Requires 'jq' to be installed -- "brew install jq" (https://stedolan.github.io/jq/download/)
 #
 fetch_ipfs() {
-    local timestamp=$(date -j -f "%Y-%m-%d %H:%M:%S %Z" "$1 $2 GMT" +%s000)
+	local timestamp="${1}T${2}Z"
     set -o pipefail # Set pipefail option so if curl fails the script will stop
     if ! curl -L -sI "https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json" | tr -d '\r' | awk 'BEGIN {FS=": "}/^etag/{printf $2}' | tr -d '"' | awk '{printf "https://ipfs.io/ipfs/%s\n", $1}'; then
         echo "Command exited with code $?"
@@ -76,13 +76,13 @@ fetch_ipfs() {
 Here's an example of fetching the URL:
 
 ```
-$ fetch_ipfs 2022-01-25 03:30:00
+$ fetch_ipfs 2022-01-27 01:00:00
 ```
 
 Here's an example output URL. Notice it uses the IPFShash.
 
 ```
-https://ipfs.io/ipfs/bafybeidhr2gcvozyznhabmubgmuwupzxvcetyfkpn5r7kvsq5alblrrlhi
+https://ipfs.io/ipfs/bafybeicwobtev44ivytnii24myc6fhxgpcimxnryneqlghbg4f2vcf6ugy
 ```
 
 **Manually Create URL**
@@ -93,20 +93,22 @@ If you have the `<IPFShash>` you can simply create the url with the following:
 
 Or you can download the data by:
 
-`$ Curl https://ipfs.io/ipfs/<IPFShash>`
+`$ curl https://ipfs.io/ipfs/<IPFShash>`
 
 If you do not have the `<IPFShash>` you can create the URL with the following URL by changing `$timestamp`:
 
-`https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json`
+```
+https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=$timestamp/evidence.json
+```
 
 Where
 
 - `$timestamp` - is written as the date/time in MS (ISO8106). You can use this free tool to convert a UTC date/time to the proper format: [https://currentmillis.com/](https://currentmillis.com/).
 
-Here's an example URL for 2022-01-25 03:30:00 GMT:
+Here's an example URL for 2022-01-27 01:00:00 GMT:
 
 ```
-https://storageapi.fleek.co/volatilitycom-bucket/indices/methodology=mfiv/interval=14d/currency=ETH/at=1643081400000/evidence.json
+https://storageapi.fleek.co/volatilitycom-bucket//indices/methodology=mfiv/interval=14d/currency=ETH/at=2022-01-27T01:00:00Z/evidence.json
 ```
 
 ## Verifying an Index
