@@ -1,10 +1,11 @@
 {
   "name": "node-volatility-mfiv",
-  "version": "0.17.0",
-  "description": "Lorem Ipsum",
+  "version": "0.2.0",
+  "description": "Library for computing and validating model-free implied volatility (MFIV).",
   "main": "./dist/src/index.js",
   "source": "src/index.ts",
   "types": "./dist/src/index.d.ts",
+  "homepage": "https://github.com/VolatilityGroup/node-volatility-mfiv#README.md",
   "scripts": {
     "build": "tsc -p tsconfig-build.json",
     "docs": "npx typedoc src/index.ts",
@@ -30,6 +31,15 @@
   "engines": {
     "node": ">=14.18.1 <17"
   },
+  "keywords": [
+    "volatility",
+    "mfiv",
+    "model free implied volatility",
+    "ethereum",
+    "crypto",
+    "volatility index",
+    "ethVOL"
+  ],
   "repository": {
     "type": "git",
     "url": "github.com/VolatilityGroup/node-volatility-mfiv"
