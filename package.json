@@ -1,5 +1,5 @@
 {
-  "name": "node-volatility-mfiv",
+  "name": "@volatility-group/volatility-mfiv-internal",
   "version": "0.2.0",
   "description": "Library for computing and validating model-free implied volatility (MFIV).",
   "main": "./dist/src/index.js",
