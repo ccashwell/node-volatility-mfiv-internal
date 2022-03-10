@@ -1,6 +1,6 @@
 {
-  "name": "@volatility-group/volatility-mfiv-internal",
-  "version": "0.2.0",
+  "name": "@volatility-group/node-volatility-mfiv",
+  "version": "0.2.1",
   "description": "Library for computing and validating model-free implied volatility (MFIV).",
   "main": "./dist/src/index.js",
   "source": "src/index.ts",
@@ -78,9 +78,11 @@
   },
   "dependencies": {
     "@nozzlegear/railway": "^2.0.0",
+    "@volatility-group/volatility-mfiv-internal": "^0.2.0",
     "chalk": "^5.0.0",
     "dayjs": "^1.10.7",
     "debug": "^4.3.3",
+    "lodash": "^4.17.21",
     "node-emoji": "^1.11.0",
     "transducist": "^2.2.0",
     "yargs": "^17.3.1"
