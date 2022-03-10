@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MfivStep2 = void 0;
 const tslib_1 = require("tslib");
-const dayjs_1 = (0, tslib_1.__importDefault)(require("dayjs"));
-const duration_1 = (0, tslib_1.__importDefault)(require("dayjs/plugin/duration"));
+const dayjs_1 = tslib_1.__importDefault(require("dayjs"));
+const duration_1 = tslib_1.__importDefault(require("dayjs/plugin/duration"));
 const constants_1 = require("../constants");
 const error_1 = require("../error");
 dayjs_1.default.extend(duration_1.default);

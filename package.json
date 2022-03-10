@@ -78,7 +78,6 @@
   },
   "dependencies": {
     "@nozzlegear/railway": "^2.0.0",
-    "@volatility-group/volatility-mfiv-internal": "^0.2.0",
     "chalk": "^5.0.0",
     "dayjs": "^1.10.7",
     "debug": "^4.3.3",
