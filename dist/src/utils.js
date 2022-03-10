@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.compose = exports.asNumberOrUndefined = exports.loadIPFS = exports.loadFile = exports.loadExample = void 0;
 const tslib_1 = require("tslib");
-const fs_1 = (0, tslib_1.__importDefault)(require("fs"));
-const https_1 = (0, tslib_1.__importDefault)(require("https"));
-const dayjs_1 = (0, tslib_1.__importDefault)(require("dayjs"));
-const utc_1 = (0, tslib_1.__importDefault)(require("dayjs/plugin/utc"));
+const fs_1 = tslib_1.__importDefault(require("fs"));
+const https_1 = tslib_1.__importDefault(require("https"));
+const dayjs_1 = tslib_1.__importDefault(require("dayjs"));
+const utc_1 = tslib_1.__importDefault(require("dayjs/plugin/utc"));
 dayjs_1.default.extend(utc_1.default);
 /**
  * Load IPFS json data
