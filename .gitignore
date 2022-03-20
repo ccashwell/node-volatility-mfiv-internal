@@ -41,6 +41,8 @@ typings/
 
 # Optional npm cache directory
 .npm
+# This file could contain npm credentials
+.npmrc
 
 # Optional eslint cache
 .eslintcache
