@@ -73,12 +73,15 @@
     "nodemon": "^2.0.15",
     "nyc": "^15.1.0",
     "prettier": "^2.6.0",
+    "standard-version": "^9.3.2",
     "ts-node": "^10.7.0",
     "tslib": "^2.3.1",
     "typedoc": "^0.22.13",
     "typescript": "^4.6.2"
   },
   "dependencies": {
+    "@commitlint/cli": "^16.2.3",
+    "@commitlint/config-conventional": "^16.2.1",
     "@nozzlegear/railway": "^2.0.0",
     "chalk": "^5.0.1",
     "dayjs": "^1.11.0",
