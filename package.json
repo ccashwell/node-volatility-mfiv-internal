@@ -49,7 +49,6 @@
     "ethVOL"
   ],
   "author": "nick@volatility.com",
-  "private": "true",
   "os": [
     "darwin",
     "linux"
