@@ -9,7 +9,7 @@ import { VolatilityCheck } from "../dist/src/volatilitycheck.js"
 let argv = yargs(process.argv.slice(2))
     .usage('Usage: $0 <command> [options]')
     .command('check', 'Verify result of volatility calculation')
-    .example(chalk.green('$0 check -e eth-mfiv-14d-2021-10-01T07:02:00.000Z'), 'check example calculations')
+    .example(chalk.green('$0 check -e eth-mfiv-14s-2021-10-01T07:02:00.000Z'), 'check example calculations')
     .alias('e', 'example')
     .nargs('e', 1)
     .string('e')
