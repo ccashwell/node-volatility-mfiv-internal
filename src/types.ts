@@ -150,7 +150,7 @@ export type MfivIntermediates = MfivStep2Terms & {
 
 export type MfivResult = MfivEstimate &
   MfivResultWithInverse & {
-    readonly methodology: "mfiv"
+    readonly methodology: "MFIV"
     readonly currency: Currency
     /** The time used (also expressed as 'ct' in the whitepaper) for the estimation */
     readonly estimatedFor: IsoDateString
@@ -159,7 +159,7 @@ export type MfivResult = MfivEstimate &
   }
 
 export type MfivEvidence = MethodologyEvidence<
-  "2022-01-01",
+  "2022-03-22",
   "mfiv.estimate.evidence",
   unknown,
   MfivContext,

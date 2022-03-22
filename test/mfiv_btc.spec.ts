@@ -26,8 +26,8 @@ function invalidate(example: MfivEvidence) {
 
 describe("MFIV", () => {
   describe("VolatilityCheck.check()", () => {
-    context("with example 'eth-mfiv-14D-2021-10-01T07:02:00.000Z.json'", () => {
-      const example = loadExample<MfivEvidence>("eth-mfiv-14D-2021-10-01T07:02:00.000Z.json")
+    context("with example 'btc-mfiv-14D-2021-10-01T07:02:00.000Z.json'", () => {
+      const example = loadExample<MfivEvidence>("btc-mfiv-14D-2021-10-01T07:02:00.000Z.json")
 
       it("returns true for isValid", done => {
         check(example)
@@ -37,8 +37,8 @@ describe("MFIV", () => {
   })
 
   describe("VolatilityCheck.isValid()", () => {
-    context("with example 'eth-mfiv-14D-2021-10-01T07:02:00.000Z.json'", () => {
-      const example = loadExample<MfivEvidence>("eth-mfiv-14D-2021-10-01T07:02:00.000Z.json")
+    context("with example 'btc-mfiv-14D-2021-10-01T07:02:00.000Z.json'", () => {
+      const example = loadExample<MfivEvidence>("btc-mfiv-14D-2021-10-01T07:02:00.000Z.json")
 
       it("returns true for isValid", done => {
         validate(example)
@@ -46,8 +46,8 @@ describe("MFIV", () => {
       })
     })
 
-    context("with example 'eth-mfiv-14D-incorrect-result.json'", () => {
-      const example = loadExample<MfivEvidence>("eth-mfiv-14D-incorrect-result.json")
+    context("with example 'btc-mfiv-14D-incorrect-result.json'", () => {
+      const example = loadExample<MfivEvidence>("btc-mfiv-14D-incorrect-result.json")
 
       it("returns false for isValid", done => {
         invalidate(example)

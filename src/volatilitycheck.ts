@@ -28,8 +28,9 @@ export class VolatilityCheck {
   }
 
   private static _compute(ctx: Context, params: Params) {
+    console.log(ctx.methodology)
     switch (ctx.methodology) {
-      case "mfiv": {
+      case "MFIV": {
         return compute(ctx, params)
       }
       default: {

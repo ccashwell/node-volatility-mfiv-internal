@@ -1,12 +1,12 @@
-export const VERSIONS = ["2022-01-01"] as const
+export const VERSIONS = ["2022-03-22"] as const
 
 export const CURRENCIES = ["ETH"] as const
 
 export const EXCHANGES = ["deribit"] as const
 
-export const METHODOLOGIES = ["mfiv"] as const
+export const METHODOLOGIES = ["MFIV"] as const
 
-export const MFIV_DURATIONS = ["14d"] as const
+export const MFIV_DURATIONS = ["14D"] as const
 
 export const EVIDENCES = ["mfiv.estimate.evidence"] as const
 
