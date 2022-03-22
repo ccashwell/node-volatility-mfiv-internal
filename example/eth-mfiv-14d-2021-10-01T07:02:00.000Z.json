@@ -1,12 +1,12 @@
 {
-  "version": "2022-01-01",
+  "version": "2022-03-22",
   "type": "mfiv.estimate.evidence",
   "metadata": {},
   "context": {
-    "methodology": "mfiv",
+    "methodology": "MFIV",
     "currency": "ETH",
     "exchange": "deribit",
-    "windowInterval": "14d",
+    "windowInterval": "14D",
     "risklessRate": 0.0056,
     "risklessRateAt": "2021-10-01T07:02:00.000Z",
     "risklessRateSource": "aave"
@@ -1738,7 +1738,7 @@
       "B": 0.9942460317460318,
       "C": 26.071428571428573
     },
-    "methodology": "mfiv",
+    "methodology": "MFIV",
     "currency": "ETH",
     "estimatedFor": "2021-10-01T07:02:00.035Z",
     "dVol": 103.68042814188414,

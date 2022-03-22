@@ -157,7 +157,7 @@
     },
     "MfivWindowInterval": {
       "type": "string",
-      "enum": ["14d"]
+      "enum": ["14D"]
     },
     "Exchange": {
       "type": "string",
@@ -165,7 +165,7 @@
     },
     "Methodology": {
       "type": "string",
-      "enum": ["mfiv"]
+      "enum": ["MFIV"]
     },
     "Currency": {
       "type": "string",
