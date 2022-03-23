@@ -1,12 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.YEAR_IN_MILLISECONDS = exports.WEEK_IN_MILLISECONDS = exports.DAY_IN_MILLISECONDS = exports.HOUR_IN_MILLISECONDS = exports.MINUTE_IN_MILLISECONDS = exports.SECOND_IN_MILLISECONDS = exports.EVIDENCES = exports.MFIV_DURATIONS = exports.METHODOLOGIES = exports.EXCHANGES = exports.CURRENCIES = exports.VERSIONS = void 0;
-exports.VERSIONS = ["2022-01-01"];
-exports.CURRENCIES = ["ETH"];
-exports.EXCHANGES = ["deribit"];
-exports.METHODOLOGIES = ["mfiv"];
-exports.MFIV_DURATIONS = ["14d"];
-exports.EVIDENCES = ["mfiv.estimate.evidence"];
+exports.YEAR_IN_MILLISECONDS = exports.WEEK_IN_MILLISECONDS = exports.DAY_IN_MILLISECONDS = exports.HOUR_IN_MILLISECONDS = exports.MINUTE_IN_MILLISECONDS = exports.SECOND_IN_MILLISECONDS = void 0;
 exports.SECOND_IN_MILLISECONDS = 1 * 1000;
 exports.MINUTE_IN_MILLISECONDS = 60 * exports.SECOND_IN_MILLISECONDS;
 exports.HOUR_IN_MILLISECONDS = 60 * exports.MINUTE_IN_MILLISECONDS;

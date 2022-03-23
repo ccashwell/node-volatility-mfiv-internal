@@ -26,8 +26,9 @@ class VolatilityCheck {
         return { isSuccess: compare(result), result: result };
     }
     static _compute(ctx, params) {
+        console.log(ctx.methodology);
         switch (ctx.methodology) {
-            case "mfiv": {
+            case "MFIV": {
                 return (0, mfiv_1.compute)(ctx, params);
             }
             default: {
