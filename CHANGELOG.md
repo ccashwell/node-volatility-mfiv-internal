@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3-alpha.4](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.3...v0.2.3-alpha.4) (2022-03-23)
+
+
+### Bug Fixes
+
+* build outdated typescript ([8c7e2cb](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/commit/8c7e2cbc37200433e5cfda2393d007449053cb9d))
+
 ### [0.2.3-alpha.3](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.2...v0.2.3-alpha.3) (2022-03-23)
 
 
