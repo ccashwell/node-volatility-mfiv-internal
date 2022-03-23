@@ -1,15 +1,3 @@
-export const VERSIONS = ["2022-03-22"] as const
-
-export const CURRENCIES = ["ETH"] as const
-
-export const EXCHANGES = ["deribit"] as const
-
-export const METHODOLOGIES = ["MFIV"] as const
-
-export const MFIV_DURATIONS = ["14D"] as const
-
-export const EVIDENCES = ["mfiv.estimate.evidence"] as const
-
 export const SECOND_IN_MILLISECONDS = 1 * 1000
 export const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
 export const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
