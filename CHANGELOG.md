@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3-alpha.5](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.4...v0.2.3-alpha.5) (2022-03-29)
+
+
+### Features
+
+* add type for BTC ([dd872da](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/commit/dd872daa15896c201a8ce2406d884d219020a056))
+
 ### [0.2.3-alpha.4](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.3...v0.2.3-alpha.4) (2022-03-23)
 
 
