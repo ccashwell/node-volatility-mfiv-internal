@@ -3,7 +3,7 @@ import { OptionPair } from "../models/optionpair"
 
 export const VERSIONS = ["2022-03-22"] as const
 
-export const CURRENCIES = ["ETH"] as const
+export const CURRENCIES = ["ETH", "BTC"] as const
 
 export const EXCHANGES = ["deribit"] as const
 
