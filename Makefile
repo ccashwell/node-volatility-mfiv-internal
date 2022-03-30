@@ -31,7 +31,7 @@ endpoint:
 dist: node_modules $(SRC_FILES)
 	npm run build
 
-release-alpha: bootstrap-npm dist
+release-alpha: dist
 	npm run release -- --prerelease alpha && \
 	git push --follow-tags origin develop
 
