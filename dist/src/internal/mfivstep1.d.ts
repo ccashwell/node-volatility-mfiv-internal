@@ -3,9 +3,9 @@ import { Expiries, MfivOptionSummary } from "../types";
 export interface MfivStepInput {
     context: MfivContext;
     params: MfivParams;
-    expiries?: Expiries<MfivOptionSummary>;
+    expiries?: Expiries<Required<MfivOptionSummary>>;
 }
 export declare class MfivStep1 {
-    run(input: MfivStepInput): Expiries<MfivOptionSummary>;
+    run(input: MfivStepInput): Expiries<Required<MfivOptionSummary>>;
 }
 //# sourceMappingURL=mfivstep1.d.ts.map

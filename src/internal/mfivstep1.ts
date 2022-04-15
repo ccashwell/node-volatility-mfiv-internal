@@ -8,10 +8,10 @@ import { Expiries, MfivOptionSummary, OptionPairMap, OptionSummary, OptionSummar
 export interface MfivStepInput {
   context: MfivContext
   params: MfivParams
-  expiries?: Expiries<MfivOptionSummary>
+  expiries?: Expiries<Required<MfivOptionSummary>>
 }
 export class MfivStep1 {
-  run(input: MfivStepInput): Expiries<MfivOptionSummary> {
+  run(input: MfivStepInput): Expiries<Required<MfivOptionSummary>> {
     const { nearDate, nextDate, options, underlyingPrice } = input.params
     const partitions = chainFrom(options)
       .map(ensureDefaults)
@@ -21,6 +21,8 @@ export class MfivStep1 {
       .map(convertTo(underlyingPrice))
       .toObjectGroupBy(o => o.expirationDate.toISOString())
 
+    debug("Options Partitioned")
+    debug("Partition keys %o", Object.keys(partitions))
     debug(
       "nearDate: %s : nextDate: %s : partitions.keys: %o : partitions[nearDate].length: %d, partitions[nextDate].length: %d",
       nearDate,
@@ -31,8 +33,8 @@ export class MfivStep1 {
     )
     const nearBook = partitions[nearDate]
     const nextBook = partitions[nextDate]
-    const nearOptionPairMap = toMapOfOptionPair(nearBook) as OptionPairMap<MfivOptionSummary>
-    const nextOptionPairMap = toMapOfOptionPair(nextBook) as OptionPairMap<MfivOptionSummary>
+    const nearOptionPairMap = toMapOfOptionPair(nearBook) as OptionPairMap<Required<MfivOptionSummary>>
+    const nextOptionPairMap = toMapOfOptionPair(nextBook) as OptionPairMap<Required<MfivOptionSummary>>
 
     return {
       nearBook,
@@ -43,7 +45,7 @@ export class MfivStep1 {
   }
 }
 
-const ensureDefaults = (o: OptionSummary) => {
+const ensureDefaults = (o: OptionSummary): Required<OptionSummary> => {
   return {
     ...o,
     bestAskPrice: o.bestAskPrice ?? 0,
@@ -53,52 +55,40 @@ const ensureDefaults = (o: OptionSummary) => {
   }
 }
 
-const validOption = (o: OptionSummaryInput) => o.bestBidPrice !== 0 && o.bestBidPrice !== undefined
+const validOption = (o: Required<OptionSummary>): boolean => o.bestBidPrice !== 0
 
 const isOneOf = (...isoDateStrings: string[]) => {
-  const epochs = isoDateStrings.map(Date.parse)
-  debug("isOneOf %j", isoDateStrings)
+  const epochs = isoDateStrings.map(str => new Date(str)).map(date => date.valueOf())
+  debug("isOneOf %j", epochs)
 
-  return (o: OptionSummary) => epochs.includes(o.expirationDate.valueOf())
+  return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
 }
 
-const chooseMidOrMark = (o: OptionSummary): Omit<MfivOptionSummary, "optionPrice"> => {
+const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSummary>, "optionPrice"> => {
   let midPrice: number | undefined = undefined
-  const bestBidPrice = o.bestBidPrice,
-    bestAskPrice = o.bestAskPrice,
-    markPrice = o.markPrice
 
-  if (bestBidPrice === 0) {
+  if (o.bestBidPrice === 0) {
     debug("insufficient data due to bestBigPrice === 0")
     throw insufficientData("bestBidPrice missing")
-  } else if (bestAskPrice === 0) {
+  } else if (o.bestAskPrice === 0) {
     return {
       ...o,
-      midPrice: markPrice,
-      bestBidPrice,
-      bestAskPrice,
-      markPrice,
+      midPrice: o.markPrice,
       reason: "bestAskPrice missing",
       source: "mark"
     }
   } else {
-    midPrice = (bestAskPrice + bestBidPrice) / 2
-    return midPrice >= 1.5 * markPrice
+    midPrice = (o.bestAskPrice + o.bestBidPrice) / 2
+    return midPrice >= 1.5 * o.markPrice
       ? {
           ...o,
-          midPrice: markPrice,
-          bestBidPrice,
-          bestAskPrice,
-          markPrice,
+          midPrice: o.markPrice,
           reason: "mid >= 1.5 * mark",
           source: "mark"
         }
       : {
           ...o,
           midPrice: midPrice,
-          bestBidPrice,
-          bestAskPrice,
-          markPrice,
           reason: "mid < 1.5 * mark",
           source: "mid"
         }
@@ -107,9 +97,8 @@ const chooseMidOrMark = (o: OptionSummary): Omit<MfivOptionSummary, "optionPrice
 
 const convertTo =
   (underlyingPrice: number) =>
-  (o: ReturnType<typeof chooseMidOrMark>): MfivOptionSummary => {
-    const optionPrice = (o.midPrice as number) * underlyingPrice
+  (o: ReturnType<typeof chooseMidOrMark>): Required<MfivOptionSummary> => {
+    const optionPrice = o.midPrice * underlyingPrice
     const converted = { ...o, optionPrice }
-    debug("convertTo(%o)", converted)
     return converted
   }

@@ -173,7 +173,7 @@ class MfivStep2 {
      * @returns number
      */
     atTheMoneyStrikePrice(options, forwardLevelPrice) {
-        (0, debug_1.debug)("atTheMoneyStrikePrice", options, forwardLevelPrice);
+        (0, debug_1.debug)("atTheMoneyStrikePrice", forwardLevelPrice);
         return options.reduce((adjacentStrike, current) => {
             if (current.strikePrice <= forwardLevelPrice && current.strikePrice > adjacentStrike) {
                 adjacentStrike = current.strikePrice;
@@ -188,7 +188,7 @@ class MfivStep2 {
      * @private
      */
     strikeWithSmallestDiff(optionPairs) {
-        (0, debug_1.debug)("strikeWithSmallestDiff", optionPairs);
+        (0, debug_1.debug)("strikeWithSmallestDiff");
         return optionPairs.reduce((previous, current) => {
             const cDiff = current.diff(), pDiff = previous.diff();
             if (isNaN(pDiff) && !isNaN(cDiff)) {
@@ -209,7 +209,7 @@ const isPutOption = (o) => o.optionType === "put";
 const isPutBelowStrike = (targetStrike) => (o) => isPutOption(o) && o.strikePrice < targetStrike;
 const isCallAboveStrike = (targetStrike) => (o) => isCallOption(o) && o.strikePrice > targetStrike;
 const finalBookGet = (entries, targetStrike) => {
-    (0, debug_1.debug)("finalBookGet", entries, targetStrike);
+    (0, debug_1.debug)("finalBookGet(%d, %d)", entries.length, targetStrike);
     const final = entries.reduce((acc, option) => {
         // find the puts below the strike, the calls above the strike, and both the put and call AT the strike
         if (isPutBelowStrike(targetStrike)(option) || isCallAboveStrike(targetStrike)(option)) {
@@ -236,7 +236,7 @@ const contributionGet = (finalBook) => {
     let contribution = 0;
     finalBook.forEach((value, idx, arr) => {
         thisStrike = Number(value[1].strikePrice);
-        thisPrice = value[1].optionPrice ?? 0;
+        thisPrice = value[1].optionPrice;
         if (idx === 0) {
             nextStrike = Number(arr[idx + 1][1].strikePrice);
             deltaK = nextStrike - thisStrike;
