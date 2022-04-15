@@ -15,6 +15,7 @@ class MfivStep1 {
             .map(chooseMidOrMark)
             .map(convertTo(underlyingPrice))
             .toObjectGroupBy(o => o.expirationDate.toISOString());
+        (0, debug_1.debug)("nearDate: %s : nextDate: %s : partitions.keys: %o : partitions[nearDate].length: %d, partitions[nextDate].length: %d", nearDate, nextDate, Object.keys(partitions), partitions[nearDate].length, partitions[nextDate].length);
         const nearBook = partitions[nearDate];
         const nextBook = partitions[nextDate];
         const nearOptionPairMap = (0, optionpair_1.toMapOfOptionPair)(nearBook);
