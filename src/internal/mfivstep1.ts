@@ -13,6 +13,7 @@ export interface MfivStepInput {
 export class MfivStep1 {
   run(input: MfivStepInput): Expiries<Required<MfivOptionSummary>> {
     const { nearDate, nextDate, options, underlyingPrice } = input.params
+    debug("Processing %d options", options.length)
     const partitions = chainFrom(options)
       .map(ensureDefaults)
       .filter(validOption)
@@ -46,12 +47,13 @@ export class MfivStep1 {
 }
 
 const ensureDefaults = (o: OptionSummary): Required<OptionSummary> => {
+  const { bestAskPrice, bestBidPrice, markPrice, underlyingPrice, ...rest } = o
   return {
-    ...o,
-    bestAskPrice: o.bestAskPrice ?? 0,
-    bestBidPrice: o.bestBidPrice ?? 0,
-    markPrice: o.markPrice ?? 0,
-    underlyingPrice: o.underlyingPrice ?? 0
+    ...rest,
+    bestAskPrice: bestAskPrice ?? 0,
+    bestBidPrice: bestBidPrice ?? 0,
+    markPrice: markPrice ?? 0,
+    underlyingPrice: underlyingPrice ?? 0
   }
 }
 
@@ -61,12 +63,15 @@ const isOneOf = (...isoDateStrings: string[]) => {
   const epochs = isoDateStrings.map(str => new Date(str)).map(date => date.valueOf())
   debug("isOneOf %j", epochs)
 
-  return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
+  return (o: Required<OptionSummary>) => {
+    const predicateResult = epochs.includes(o.expirationDate.valueOf())
+    debug("%o includes %o = %o", epochs, o.expirationDate.valueOf(), predicateResult)
+    return predicateResult
+  }
+  // return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
 }
 
 const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSummary>, "optionPrice"> => {
-  let midPrice: number | undefined = undefined
-
   if (o.bestBidPrice === 0) {
     debug("insufficient data due to bestBigPrice === 0")
     throw insufficientData("bestBidPrice missing")
@@ -78,7 +83,7 @@ const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSu
       source: "mark"
     }
   } else {
-    midPrice = (o.bestAskPrice + o.bestBidPrice) / 2
+    const midPrice = (o.bestAskPrice + o.bestBidPrice) / 2
     return midPrice >= 1.5 * o.markPrice
       ? {
           ...o,
@@ -98,7 +103,5 @@ const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSu
 const convertTo =
   (underlyingPrice: number) =>
   (o: ReturnType<typeof chooseMidOrMark>): Required<MfivOptionSummary> => {
-    const optionPrice = o.midPrice * underlyingPrice
-    const converted = { ...o, optionPrice }
-    return converted
+    return { ...o, optionPrice: o.midPrice * underlyingPrice }
   }
