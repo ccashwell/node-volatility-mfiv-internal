@@ -1,4 +1,5 @@
 import { chainFrom } from "transducist"
+import { debug } from "../debug"
 import { insufficientData } from "../error"
 import { MfivContext, MfivParams } from "../mfiv"
 import { toMapOfOptionPair } from "../models/optionpair"
@@ -48,6 +49,8 @@ const validOption = (o: OptionSummaryInput) => o.bestBidPrice !== 0 && o.bestBid
 
 const isOneOf = (...isoDateStrings: string[]) => {
   const epochs = isoDateStrings.map(Date.parse)
+  debug("isOneOf %j", isoDateStrings)
+
   return (o: OptionSummary) => epochs.includes(o.expirationDate.valueOf())
 }
 
@@ -58,6 +61,7 @@ const chooseMidOrMark = (o: OptionSummary): Omit<MfivOptionSummary, "optionPrice
     markPrice = o.markPrice
 
   if (bestBidPrice === 0) {
+    debug("insufficient data due to bestBigPrice === 0")
     throw insufficientData("bestBidPrice missing")
   } else if (bestAskPrice === 0) {
     return {
@@ -97,5 +101,7 @@ const convertTo =
   (underlyingPrice: number) =>
   (o: ReturnType<typeof chooseMidOrMark>): MfivOptionSummary => {
     const optionPrice = (o.midPrice as number) * underlyingPrice
-    return { ...o, optionPrice }
+    const converted = { ...o, optionPrice }
+    debug("convertTo(%o)", converted)
+    return converted
   }

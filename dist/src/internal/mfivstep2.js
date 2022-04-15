@@ -5,6 +5,7 @@ const tslib_1 = require("tslib");
 const dayjs_1 = tslib_1.__importDefault(require("dayjs"));
 const duration_1 = tslib_1.__importDefault(require("dayjs/plugin/duration"));
 const constants_1 = require("../constants");
+const debug_1 = require("../debug");
 const error_1 = require("../error");
 dayjs_1.default.extend(duration_1.default);
 /***************************************************************************************************************************\
@@ -143,6 +144,7 @@ class MfivStep2 {
         if (!strike) {
             throw (0, error_1.insufficientData)("No forward price. Should occur at burn-in only!");
         }
+        (0, debug_1.debug)("forwardStrike", strike);
         return strike;
     }
     /**
@@ -171,6 +173,7 @@ class MfivStep2 {
      * @returns number
      */
     atTheMoneyStrikePrice(options, forwardLevelPrice) {
+        (0, debug_1.debug)("atTheMoneyStrikePrice", options, forwardLevelPrice);
         return options.reduce((adjacentStrike, current) => {
             if (current.strikePrice <= forwardLevelPrice && current.strikePrice > adjacentStrike) {
                 adjacentStrike = current.strikePrice;
@@ -185,6 +188,7 @@ class MfivStep2 {
      * @private
      */
     strikeWithSmallestDiff(optionPairs) {
+        (0, debug_1.debug)("strikeWithSmallestDiff", optionPairs);
         return optionPairs.reduce((previous, current) => {
             const cDiff = current.diff(), pDiff = previous.diff();
             if (isNaN(pDiff) && !isNaN(cDiff)) {
@@ -205,6 +209,7 @@ const isPutOption = (o) => o.optionType === "put";
 const isPutBelowStrike = (targetStrike) => (o) => isPutOption(o) && o.strikePrice < targetStrike;
 const isCallAboveStrike = (targetStrike) => (o) => isCallOption(o) && o.strikePrice > targetStrike;
 const finalBookGet = (entries, targetStrike) => {
+    (0, debug_1.debug)("finalBookGet", entries, targetStrike);
     const final = entries.reduce((acc, option) => {
         // find the puts below the strike, the calls above the strike, and both the put and call AT the strike
         if (isPutBelowStrike(targetStrike)(option) || isCallAboveStrike(targetStrike)(option)) {

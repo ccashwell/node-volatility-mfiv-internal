@@ -1,6 +1,7 @@
 import dayjs from "dayjs"
 import Duration from "dayjs/plugin/duration"
 import { YEAR_IN_MILLISECONDS } from "../constants"
+import { debug } from "../debug"
 import { insufficientData } from "../error"
 import { MfivOptionPair } from "../models/mfivoptionpair"
 import { OptionPair } from "../models/optionpair"
@@ -154,6 +155,8 @@ export class MfivStep2 {
       throw insufficientData("No forward price. Should occur at burn-in only!")
     }
 
+    debug("forwardStrike", strike)
+
     return strike
   }
 
@@ -185,6 +188,8 @@ export class MfivStep2 {
    * @returns number
    */
   atTheMoneyStrikePrice(options: MfivOptionSummary[], forwardLevelPrice: number) {
+    debug("atTheMoneyStrikePrice", options, forwardLevelPrice)
+
     return options.reduce((adjacentStrike: number, current: MfivOptionSummary) => {
       if (current.strikePrice <= forwardLevelPrice && current.strikePrice > adjacentStrike) {
         adjacentStrike = current.strikePrice
@@ -201,6 +206,7 @@ export class MfivStep2 {
    * @private
    */
   private strikeWithSmallestDiff(optionPairs: MfivOptionPair[]) {
+    debug("strikeWithSmallestDiff", optionPairs)
     return optionPairs.reduce((previous, current) => {
       const cDiff = current.diff(),
         pDiff = previous.diff()
@@ -223,6 +229,8 @@ const isCallAboveStrike = (targetStrike: number) => (o: OptionSummary) =>
   isCallOption(o) && o.strikePrice > targetStrike
 
 const finalBookGet = (entries: MfivOptionSummary[], targetStrike: number) => {
+  debug("finalBookGet", entries, targetStrike)
+
   const final = entries.reduce(
     (acc, option) => {
       // find the puts below the strike, the calls above the strike, and both the put and call AT the strike
