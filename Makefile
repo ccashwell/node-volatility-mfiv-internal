@@ -33,7 +33,8 @@ dist: node_modules $(SRC_FILES)
 
 release-alpha: dist
 	npm run release -- --prerelease alpha && \
-	git push --follow-tags origin develop
+	git push --follow-tags origin develop && \
+	npm publish --tag alpha
 
 clean:
 	rm -rf dist && \
