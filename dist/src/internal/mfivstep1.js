@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MfivStep1 = void 0;
 const transducist_1 = require("transducist");
+const debug_1 = require("../debug");
 const error_1 = require("../error");
 const optionpair_1 = require("../models/optionpair");
 class MfivStep1 {
@@ -39,12 +40,14 @@ const ensureDefaults = (o) => {
 const validOption = (o) => o.bestBidPrice !== 0 && o.bestBidPrice !== undefined;
 const isOneOf = (...isoDateStrings) => {
     const epochs = isoDateStrings.map(Date.parse);
+    (0, debug_1.debug)("isOneOf %j", isoDateStrings);
     return (o) => epochs.includes(o.expirationDate.valueOf());
 };
 const chooseMidOrMark = (o) => {
     let midPrice = undefined;
     const bestBidPrice = o.bestBidPrice, bestAskPrice = o.bestAskPrice, markPrice = o.markPrice;
     if (bestBidPrice === 0) {
+        (0, debug_1.debug)("insufficient data due to bestBigPrice === 0");
         throw (0, error_1.insufficientData)("bestBidPrice missing");
     }
     else if (bestAskPrice === 0) {
@@ -83,5 +86,7 @@ const chooseMidOrMark = (o) => {
 };
 const convertTo = (underlyingPrice) => (o) => {
     const optionPrice = o.midPrice * underlyingPrice;
-    return { ...o, optionPrice };
+    const converted = { ...o, optionPrice };
+    (0, debug_1.debug)("convertTo(%o)", converted);
+    return converted;
 };
