@@ -1,13 +1,13 @@
 {
   "version": "2022-03-22",
   "context": {
-    "windowInterval": "14D",
+    "timePeriod": "14D",
     "risklessRate": 0.0055,
     "risklessRateAt": "2022-01-27T01:00:00.011Z",
     "risklessRateSource": "AAVE",
     "methodology": "MFIV",
     "exchange": "deribit",
-    "currency": "ETH"
+    "asset": "ETH"
   },
   "params": {
     "at": "2022-01-27T01:00:00.011Z",
@@ -2731,7 +2731,7 @@
   },
   "result": {
     "methodology": "MFIV",
-    "currency": "ETH",
+    "asset": "ETH",
     "estimatedFor": "2022-01-27T01:00:00.011Z",
     "dVol": 98.74835628391783,
     "invdVol": 101.26750840538902,
@@ -4396,7 +4396,7 @@
     "metrics": []
   },
   "metadata": {
-    "uri": "/indices/methodology=mfiv/interval=14D/currency=ETH/at=2022-01-27T01:00:00Z/evidence.json",
+    "uri": "/indices/methodology=mfiv/timePeriod=14D/asset=ETH/at=2022-01-27T01:00:00Z/evidence.json",
     "uma.priceId": "MFIV.14D.ETH"
   },
   "eventType": "MFIV.14D.ETH.index.created"

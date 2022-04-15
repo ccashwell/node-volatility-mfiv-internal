@@ -4,9 +4,9 @@
   "metadata": {},
   "context": {
     "methodology": "MFIV",
-    "currency": "ETH",
+    "asset": "ETH",
     "exchange": "deribit",
-    "windowInterval": "14D",
+    "timePeriod": "14D",
     "risklessRate": 0.0056,
     "risklessRateAt": "2021-10-01T07:02:00.000Z",
     "risklessRateSource": "AAVE"
@@ -1739,7 +1739,7 @@
       "C": 26.071428571428573
     },
     "methodology": "MFIV",
-    "currency": "ETH",
+    "asset": "ETH",
     "estimatedFor": "2021-10-01T07:02:00.035Z",
     "dVol": 103.68042814188414,
     "invdVol": 96.45021899712107,

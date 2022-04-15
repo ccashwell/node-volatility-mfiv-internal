@@ -11,7 +11,11 @@ export const METHODOLOGIES = ["MFIV"] as const
 
 export const MFIV_DURATIONS = ["14D"] as const
 
+export const MFIV_TIME_PERIODS = ["14D"] as const
+
 export const EVIDENCES = ["MFIV.ESTIMATE.EVIDENCE"] as const
+
+export const MFIV_ASSETS = ["ETH", "BTC"] as const
 
 export type Version = typeof VERSIONS[number]
 
@@ -24,6 +28,10 @@ export type Methodology = typeof METHODOLOGIES[number]
 export type Evidence = typeof EVIDENCES[number]
 
 export type MfivDuration = typeof MFIV_DURATIONS[number]
+
+export type TimePeriod = typeof MFIV_TIME_PERIODS[number]
+
+export type Asset = typeof MFIV_ASSETS[number]
 
 /**
  * Data type to represent the number of milliseconds since January 1, 1970
@@ -94,7 +102,7 @@ export type OptionSummary = {
 export type BaseContext = {
   readonly methodology: Methodology
   readonly exchange: Exchange
-  readonly currency: Currency
+  readonly asset: Asset
 }
 
 export type OptionType = { optionType: "call" | "put" }
@@ -162,7 +170,7 @@ export type MfivIntermediates = MfivStep2Terms & {
 export type MfivResult = MfivEstimate &
   MfivResultWithInverse & {
     readonly methodology: "MFIV"
-    readonly currency: Currency
+    readonly asset: Asset
     /** The time used (also expressed as 'ct' in the whitepaper) for the estimation */
     readonly estimatedFor: IsoDateString
 

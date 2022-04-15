@@ -13,8 +13,8 @@ import { BaseContext, MfivDuration, MfivEstimate, MfivResult, MfivResultWithInve
  * @param params Inputs for calculating the index
  * @returns a result object containing the index value and its intermediates
  */
-export function compute(context: MfivContext, params: MfivParams) {
-  debug("compute %s-%s-%s @ %s", context.methodology, context.currency, context.windowInterval, params.at)
+export function compute(context: MfivContext, params: MfivParams): MfivResult {
+  debug("compute %s-%s-%s @ %s", context.methodology, context.asset, context.timePeriod, params.at)
   const step1 = new MfivStep1()
   const step2 = new MfivStep2()
   const step3 = new MfivStep3()
@@ -36,9 +36,10 @@ const produceResult = ({
   invdVol,
   value
 }: MfivStepInput & MfivResultWithInverse & MfivEstimate): MfivResult => {
+  const { methodology, asset } = context
   return {
-    methodology: context.methodology,
-    currency: context.currency,
+    methodology,
+    asset,
     estimatedFor: params.at,
     dVol,
     invdVol,
@@ -49,7 +50,7 @@ const produceResult = ({
 }
 
 export type MfivContext = BaseContext & {
-  readonly windowInterval: MfivDuration
+  readonly timePeriod: MfivDuration
   readonly risklessRate: number
   readonly risklessRateAt: string
   readonly risklessRateSource: string

@@ -9,7 +9,7 @@ function check(example: MfivEvidence) {
   expect(result.result).to.include({
     dVol: example.result.dVol,
     invdVol: example.result.invdVol,
-    currency: example.context.currency,
+    asset: example.context.asset,
     estimatedFor: example.params.at
   })
 
