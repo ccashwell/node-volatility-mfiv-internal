@@ -15,7 +15,7 @@ const mfivstep3_1 = require("./internal/mfivstep3");
  * @returns a result object containing the index value and its intermediates
  */
 function compute(context, params) {
-    (0, debug_1.debug)("compute %s-%s-%s @ %s", context.methodology, context.currency, context.windowInterval, params.at);
+    (0, debug_1.debug)("compute %s-%s-%s @ %s", context.methodology, context.asset, context.timePeriod, params.at);
     const step1 = new mfivstep1_1.MfivStep1();
     const step2 = new mfivstep2_1.MfivStep2();
     const step3 = new mfivstep3_1.MfivStep3();
@@ -29,9 +29,10 @@ function compute(context, params) {
 }
 exports.compute = compute;
 const produceResult = ({ context, params, intermediates, dVol, invdVol, value }) => {
+    const { methodology, asset } = context;
     return {
-        methodology: context.methodology,
-        currency: context.currency,
+        methodology,
+        asset,
         estimatedFor: params.at,
         dVol,
         invdVol,

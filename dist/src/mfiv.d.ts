@@ -8,7 +8,7 @@ import { BaseContext, MfivDuration, MfivResult, OptionSummary } from "./types";
  */
 export declare function compute(context: MfivContext, params: MfivParams): MfivResult;
 export declare type MfivContext = BaseContext & {
-    readonly windowInterval: MfivDuration;
+    readonly timePeriod: MfivDuration;
     readonly risklessRate: number;
     readonly risklessRateAt: string;
     readonly risklessRateSource: string;
