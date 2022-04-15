@@ -14,7 +14,7 @@ import { BaseContext, MfivDuration, MfivEstimate, MfivResult, MfivResultWithInve
  * @returns a result object containing the index value and its intermediates
  */
 export function compute(context: MfivContext, params: MfivParams): MfivResult {
-  debug("compute %s-%s-%s @ %s", context.methodology, context.asset, context.timePeriod, params.at)
+  debug("compute %s-%s-%s @ %s", context.methodology, context.timePeriod, context.asset, params.at)
   const step1 = new MfivStep1()
   const step2 = new MfivStep2()
   const step3 = new MfivStep3()
