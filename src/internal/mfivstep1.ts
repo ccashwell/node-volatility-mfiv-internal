@@ -64,8 +64,8 @@ const isOneOf = (...isoDateStrings: string[]) => {
   debug("isOneOf %j", epochs)
 
   return (o: Required<OptionSummary>) => {
-    const predicateResult = epochs.includes(o.expirationDate.valueOf())
-    debug("%o includes %o = %o", epochs, o.expirationDate.valueOf(), predicateResult)
+    const predicateResult = epochs.includes(new Date(o.expirationDate).valueOf())
+    debug("%o includes %o = %o", epochs, new Date(o.expirationDate).valueOf(), predicateResult)
     return predicateResult
   }
   // return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
