@@ -29,8 +29,8 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "windowInterval": {
-          "$ref": "#/definitions/MfivWindowInterval"
+        "timePeriod": {
+          "$ref": "#/definitions/TimePeriod"
         },
         "risklessRate": {
           "type": "number"
@@ -139,12 +139,12 @@
         "exchange": {
           "$ref": "#/definitions/Exchange"
         },
-        "currency": {
-          "$ref": "#/definitions/Currency"
+        "asset": {
+          "$ref": "#/definitions/Asset"
         }
       },
       "required": [
-        "currency",
+        "asset",
         "exchange",
         "methodology",
         "nearMidBook",
@@ -152,10 +152,14 @@
         "risklessRate",
         "risklessRateAt",
         "risklessRateSource",
-        "windowInterval"
+        "timePeriod"
       ]
     },
     "MfivWindowInterval": {
+      "type": "string",
+      "enum": ["14D"]
+    },
+    "TimePeriod": {
       "type": "string",
       "enum": ["14D"]
     },
@@ -167,9 +171,13 @@
       "type": "string",
       "enum": ["MFIV"]
     },
+    "Asset": {
+      "type": "string",
+      "enum": ["ETH", "BTC"]
+    },
     "Currency": {
       "type": "string",
-      "enum": ["ETH"]
+      "enum": ["ETH", "BTC"]
     },
     "MfivParams": {
       "type": "object",
