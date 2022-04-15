@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3-alpha.9](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.8...v0.2.3-alpha.9) (2022-04-15)
+
 ### [0.2.3-alpha.8](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.7...v0.2.3-alpha.8) (2022-04-15)
 
 ### [0.2.3-alpha.7](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.6...v0.2.3-alpha.7) (2022-03-30)
