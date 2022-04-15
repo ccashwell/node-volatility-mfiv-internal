@@ -78,7 +78,7 @@ export declare class MfivStep2 {
      * @param expiries - options partitioned into near and next expiries
      */
     run({ context, params, expiries }: MfivStepInput & {
-        expiries: Expiries<MfivOptionSummary>;
+        expiries: Expiries<Required<MfivOptionSummary>>;
     }): MfivStep2Terms;
     /**
      * (step 2a) Determine the forward strike K*
@@ -91,7 +91,7 @@ export declare class MfivStep2 {
      *
      * @throws {@link Failure<VolatilityError.InsufficientData>}
      */
-    forwardStrike(options: OptionPair<MfivOptionSummary>[]): MfivOptionPair;
+    forwardStrike(options: OptionPair<Required<MfivOptionSummary>>[]): MfivOptionPair;
     /**
      * (step 2b) Determine the forward level: F = K* + e^(RT) ∙ (C* - P*)
      *
@@ -108,7 +108,7 @@ export declare class MfivStep2 {
      *
      * @returns number
      */
-    atTheMoneyStrikePrice(options: MfivOptionSummary[], forwardLevelPrice: number): number;
+    atTheMoneyStrikePrice(options: Required<MfivOptionSummary>[], forwardLevelPrice: number): number;
     /**
      * (step 2a continued)
      *

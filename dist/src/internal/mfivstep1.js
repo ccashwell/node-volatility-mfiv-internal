@@ -15,6 +15,8 @@ class MfivStep1 {
             .map(chooseMidOrMark)
             .map(convertTo(underlyingPrice))
             .toObjectGroupBy(o => o.expirationDate.toISOString());
+        (0, debug_1.debug)("Options Partitioned");
+        (0, debug_1.debug)("Partition keys %o", Object.keys(partitions));
         (0, debug_1.debug)("nearDate: %s : nextDate: %s : partitions.keys: %o : partitions[nearDate].length: %d, partitions[nextDate].length: %d", nearDate, nextDate, Object.keys(partitions), partitions[nearDate].length, partitions[nextDate].length);
         const nearBook = partitions[nearDate];
         const nextBook = partitions[nextDate];
@@ -38,48 +40,38 @@ const ensureDefaults = (o) => {
         underlyingPrice: o.underlyingPrice ?? 0
     };
 };
-const validOption = (o) => o.bestBidPrice !== 0 && o.bestBidPrice !== undefined;
+const validOption = (o) => o.bestBidPrice !== 0;
 const isOneOf = (...isoDateStrings) => {
-    const epochs = isoDateStrings.map(Date.parse);
-    (0, debug_1.debug)("isOneOf %j", isoDateStrings);
+    const epochs = isoDateStrings.map(str => new Date(str)).map(date => date.valueOf());
+    (0, debug_1.debug)("isOneOf %j", epochs);
     return (o) => epochs.includes(o.expirationDate.valueOf());
 };
 const chooseMidOrMark = (o) => {
     let midPrice = undefined;
-    const bestBidPrice = o.bestBidPrice, bestAskPrice = o.bestAskPrice, markPrice = o.markPrice;
-    if (bestBidPrice === 0) {
+    if (o.bestBidPrice === 0) {
         (0, debug_1.debug)("insufficient data due to bestBigPrice === 0");
         throw (0, error_1.insufficientData)("bestBidPrice missing");
     }
-    else if (bestAskPrice === 0) {
+    else if (o.bestAskPrice === 0) {
         return {
             ...o,
-            midPrice: markPrice,
-            bestBidPrice,
-            bestAskPrice,
-            markPrice,
+            midPrice: o.markPrice,
             reason: "bestAskPrice missing",
             source: "mark"
         };
     }
     else {
-        midPrice = (bestAskPrice + bestBidPrice) / 2;
-        return midPrice >= 1.5 * markPrice
+        midPrice = (o.bestAskPrice + o.bestBidPrice) / 2;
+        return midPrice >= 1.5 * o.markPrice
             ? {
                 ...o,
-                midPrice: markPrice,
-                bestBidPrice,
-                bestAskPrice,
-                markPrice,
+                midPrice: o.markPrice,
                 reason: "mid >= 1.5 * mark",
                 source: "mark"
             }
             : {
                 ...o,
                 midPrice: midPrice,
-                bestBidPrice,
-                bestAskPrice,
-                markPrice,
                 reason: "mid < 1.5 * mark",
                 source: "mid"
             };
@@ -88,6 +80,5 @@ const chooseMidOrMark = (o) => {
 const convertTo = (underlyingPrice) => (o) => {
     const optionPrice = o.midPrice * underlyingPrice;
     const converted = { ...o, optionPrice };
-    (0, debug_1.debug)("convertTo(%o)", converted);
     return converted;
 };

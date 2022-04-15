@@ -90,7 +90,7 @@ export class MfivStep2 {
     params,
     expiries
   }: MfivStepInput & {
-    expiries: Expiries<MfivOptionSummary>
+    expiries: Expiries<Required<MfivOptionSummary>>
   }) {
     const risklessRate = context.risklessRate
     const nowEpoch = Date.parse(params.at)
@@ -148,7 +148,7 @@ export class MfivStep2 {
    *
    * @throws {@link Failure<VolatilityError.InsufficientData>}
    */
-  forwardStrike(options: OptionPair<MfivOptionSummary>[]) {
+  forwardStrike(options: OptionPair<Required<MfivOptionSummary>>[]) {
     const strike = this.strikeWithSmallestDiff(options)
 
     if (!strike) {
@@ -187,10 +187,10 @@ export class MfivStep2 {
    *
    * @returns number
    */
-  atTheMoneyStrikePrice(options: MfivOptionSummary[], forwardLevelPrice: number) {
-    debug("atTheMoneyStrikePrice", options, forwardLevelPrice)
+  atTheMoneyStrikePrice(options: Required<MfivOptionSummary>[], forwardLevelPrice: number) {
+    debug("atTheMoneyStrikePrice", forwardLevelPrice)
 
-    return options.reduce((adjacentStrike: number, current: MfivOptionSummary) => {
+    return options.reduce((adjacentStrike: number, current: Required<MfivOptionSummary>) => {
       if (current.strikePrice <= forwardLevelPrice && current.strikePrice > adjacentStrike) {
         adjacentStrike = current.strikePrice
       }
@@ -206,7 +206,7 @@ export class MfivStep2 {
    * @private
    */
   private strikeWithSmallestDiff(optionPairs: MfivOptionPair[]) {
-    debug("strikeWithSmallestDiff", optionPairs)
+    debug("strikeWithSmallestDiff")
     return optionPairs.reduce((previous, current) => {
       const cDiff = current.diff(),
         pDiff = previous.diff()
@@ -228,8 +228,8 @@ const isPutBelowStrike = (targetStrike: number) => (o: OptionSummary) => isPutOp
 const isCallAboveStrike = (targetStrike: number) => (o: OptionSummary) =>
   isCallOption(o) && o.strikePrice > targetStrike
 
-const finalBookGet = (entries: MfivOptionSummary[], targetStrike: number) => {
-  debug("finalBookGet", entries, targetStrike)
+const finalBookGet = (entries: Required<MfivOptionSummary>[], targetStrike: number) => {
+  debug("finalBookGet(%d, %d)", entries.length, targetStrike)
 
   const final = entries.reduce(
     (acc, option) => {
@@ -242,7 +242,7 @@ const finalBookGet = (entries: MfivOptionSummary[], targetStrike: number) => {
 
       return acc
     },
-    { avg: [] as [string, MfivOptionSummary][], book: [] as [string, MfivOptionSummary][] }
+    { avg: [] as [string, Required<MfivOptionSummary>][], book: [] as [string, Required<MfivOptionSummary>][] }
   )
 
   // add to the list the average of the call and put prices at the strike
@@ -259,13 +259,13 @@ const finalBookGet = (entries: MfivOptionSummary[], targetStrike: number) => {
   })
 }
 
-const contributionGet = (finalBook: [string, MfivOptionSummary][]) => {
+const contributionGet = (finalBook: [string, Required<MfivOptionSummary>][]) => {
   let thisStrike: number, nextStrike: number, previousStrike: number, deltaK: number, thisPrice: number
   let contribution = 0
 
   finalBook.forEach((value, idx, arr) => {
     thisStrike = Number(value[1].strikePrice)
-    thisPrice = value[1].optionPrice ?? 0
+    thisPrice = value[1].optionPrice
 
     if (idx === 0) {
       nextStrike = Number(arr[idx + 1][1].strikePrice)
