@@ -33,9 +33,11 @@ class MfivStep1 {
 }
 exports.MfivStep1 = MfivStep1;
 const ensureDefaults = (o) => {
-    const { bestAskPrice, bestBidPrice, markPrice, underlyingPrice, ...rest } = o;
+    const { bestAskPrice, bestBidPrice, markPrice, underlyingPrice, expirationDate, timestamp, ...rest } = o;
     return {
         ...rest,
+        timestamp: timestamp instanceof Date ? timestamp : new Date(timestamp),
+        expirationDate: expirationDate instanceof Date ? expirationDate : new Date(expirationDate),
         bestAskPrice: bestAskPrice ?? 0,
         bestBidPrice: bestBidPrice ?? 0,
         markPrice: markPrice ?? 0,
@@ -47,8 +49,9 @@ const isOneOf = (...isoDateStrings) => {
     const epochs = isoDateStrings.map(str => new Date(str)).map(date => date.valueOf());
     (0, debug_1.debug)("isOneOf %j", epochs);
     return (o) => {
-        const predicateResult = epochs.includes(new Date(o.expirationDate).valueOf());
-        (0, debug_1.debug)("%o includes %o = %o", epochs, new Date(o.expirationDate).valueOf(), predicateResult);
+        const expiry = o.expirationDate.valueOf();
+        const predicateResult = epochs.includes(expiry);
+        (0, debug_1.debug)("%o includes %o = %o", epochs, expiry, predicateResult);
         return predicateResult;
     };
     // return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
@@ -59,6 +62,7 @@ const chooseMidOrMark = (o) => {
         throw (0, error_1.insufficientData)("bestBidPrice missing");
     }
     else if (o.bestAskPrice === 0) {
+        (0, debug_1.debug)("chose mid = mark");
         return {
             ...o,
             midPrice: o.markPrice,
@@ -68,7 +72,9 @@ const chooseMidOrMark = (o) => {
     }
     else {
         const midPrice = (o.bestAskPrice + o.bestBidPrice) / 2;
-        return midPrice >= 1.5 * o.markPrice
+        const maximumMidValue = 1.5 * o.markPrice;
+        (0, debug_1.debug)("chose mid = %s", midPrice >= maximumMidValue ? "mark" : "mid");
+        return midPrice >= maximumMidValue
             ? {
                 ...o,
                 midPrice: o.markPrice,

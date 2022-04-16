@@ -47,9 +47,11 @@ export class MfivStep1 {
 }
 
 const ensureDefaults = (o: OptionSummary): Required<OptionSummary> => {
-  const { bestAskPrice, bestBidPrice, markPrice, underlyingPrice, ...rest } = o
+  const { bestAskPrice, bestBidPrice, markPrice, underlyingPrice, expirationDate, timestamp, ...rest } = o
   return {
     ...rest,
+    timestamp: timestamp instanceof Date ? timestamp : new Date(timestamp),
+    expirationDate: expirationDate instanceof Date ? expirationDate : new Date(expirationDate),
     bestAskPrice: bestAskPrice ?? 0,
     bestBidPrice: bestBidPrice ?? 0,
     markPrice: markPrice ?? 0,
@@ -64,8 +66,9 @@ const isOneOf = (...isoDateStrings: string[]) => {
   debug("isOneOf %j", epochs)
 
   return (o: Required<OptionSummary>) => {
-    const predicateResult = epochs.includes(new Date(o.expirationDate).valueOf())
-    debug("%o includes %o = %o", epochs, new Date(o.expirationDate).valueOf(), predicateResult)
+    const expiry = o.expirationDate.valueOf()
+    const predicateResult = epochs.includes(expiry)
+    debug("%o includes %o = %o", epochs, expiry, predicateResult)
     return predicateResult
   }
   // return (o: Required<OptionSummary>) => epochs.includes(o.expirationDate.valueOf())
@@ -76,6 +79,7 @@ const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSu
     debug("insufficient data due to bestBigPrice === 0")
     throw insufficientData("bestBidPrice missing")
   } else if (o.bestAskPrice === 0) {
+    debug("chose mid = mark")
     return {
       ...o,
       midPrice: o.markPrice,
@@ -84,7 +88,9 @@ const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSu
     }
   } else {
     const midPrice = (o.bestAskPrice + o.bestBidPrice) / 2
-    return midPrice >= 1.5 * o.markPrice
+    const maximumMidValue = 1.5 * o.markPrice
+    debug("chose mid = %s", midPrice >= maximumMidValue ? "mark" : "mid")
+    return midPrice >= maximumMidValue
       ? {
           ...o,
           midPrice: o.markPrice,
