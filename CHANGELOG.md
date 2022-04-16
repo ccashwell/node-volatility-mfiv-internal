@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.2.3-alpha.15](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.14...v0.2.3-alpha.15) (2022-04-16)
+
+
+### Features
+
+* convert string timestamps to Date ([242e228](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/commit/242e2283ca500a25caec62043a9175df111134d3))
+
 ### [0.2.3-alpha.14](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.2.3-alpha.13...v0.2.3-alpha.14) (2022-04-15)
 
 
