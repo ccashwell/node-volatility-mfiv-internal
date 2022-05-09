@@ -76,7 +76,7 @@ const isOneOf = (...isoDateStrings: string[]) => {
 
 const chooseMidOrMark = (o: Required<OptionSummary>): Omit<Required<MfivOptionSummary>, "optionPrice"> => {
   if (o.bestBidPrice === 0) {
-    debug("insufficient data due to bestBigPrice === 0")
+    debug("insufficient data due to bestBidPrice === 0")
     throw insufficientData("bestBidPrice missing")
   } else if (o.bestAskPrice === 0) {
     debug("chose mid = mark")

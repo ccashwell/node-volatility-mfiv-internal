@@ -58,7 +58,7 @@ const isOneOf = (...isoDateStrings) => {
 };
 const chooseMidOrMark = (o) => {
     if (o.bestBidPrice === 0) {
-        (0, debug_1.debug)("insufficient data due to bestBigPrice === 0");
+        (0, debug_1.debug)("insufficient data due to bestBidPrice === 0");
         throw (0, error_1.insufficientData)("bestBidPrice missing");
     }
     else if (o.bestAskPrice === 0) {
