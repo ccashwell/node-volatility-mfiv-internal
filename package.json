@@ -9,10 +9,10 @@
   "types": "./dist/src/index.d.ts",
   "homepage": "https://github.com/VolatilityGroup/node-volatility-mfiv#README.md",
   "scripts": {
-    "release": "standard-version",
+    "release:major": "standard-version --release-as major",
     "release:minor": "standard-version --release-as minor",
     "release:patch": "standard-version --release-as patch",
-    "release:major": "standard-version --release-as major",
+    "release": "standard-version",
     "build": "tsc -p tsconfig-build.json",
     "docs": "npx typedoc src/index.ts",
     "outdated": "ncu",
@@ -26,6 +26,8 @@
     "prepare": "husky install",
     "volatility-check": "./bin/volatility.mjs check -e",
     "example": "npm run volatility-check eth-mfiv-14d-2021-10-01T07:02:00.000Z",
+    "example:now": "npm run volatility-check eth-mfiv-14d-2022-05-06T18:15:05Z",
+    "example:may26": "npm run volatility-check may26.v2",
     "vulnerabilities": "npm audit"
   },
   "bin": {
