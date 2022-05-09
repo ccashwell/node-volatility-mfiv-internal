@@ -11,8 +11,6 @@ export const METHODOLOGIES = ["MFIV"] as const
 
 export const MFIV_DURATIONS = ["14D"] as const
 
-export const MFIV_TIME_PERIODS = ["14D"] as const
-
 export const EVIDENCES = ["MFIV.ESTIMATE.EVIDENCE"] as const
 
 export const MFIV_ASSETS = ["ETH", "BTC"] as const
@@ -29,7 +27,7 @@ export type Evidence = typeof EVIDENCES[number]
 
 export type MfivDuration = typeof MFIV_DURATIONS[number]
 
-export type TimePeriod = typeof MFIV_TIME_PERIODS[number]
+export type TimePeriod = string /* typeof MFIV_TIME_PERIODS[number] */
 
 export type Asset = typeof MFIV_ASSETS[number]
 
