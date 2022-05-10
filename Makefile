@@ -31,7 +31,7 @@ endpoint:
 dist: node_modules $(SRC_FILES)
 	npm run build
 
-release-alpha: dist
+release-alpha: dist .npmrc
 	npm run release -- --prerelease alpha && \
 	git push --follow-tags origin develop && \
 	npm publish --tag alpha
