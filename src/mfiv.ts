@@ -4,7 +4,7 @@ import { debug } from "./debug"
 import { MfivStep1, MfivStepInput } from "./internal/mfivstep1"
 import { MfivStep2 } from "./internal/mfivstep2"
 import { MfivStep3 } from "./internal/mfivstep3"
-import { BaseContext, MfivDuration, MfivEstimate, MfivResult, MfivResultWithInverse, OptionSummary } from "./types"
+import { BaseContext, MfivEstimate, MfivResult, MfivResultWithInverse, OptionSummary } from "./types"
 
 /**
  * Compute the volatility index value for the given mfiv context and model parameters
@@ -50,7 +50,7 @@ const produceResult = ({
 }
 
 export type MfivContext = BaseContext & {
-  readonly timePeriod: MfivDuration
+  readonly timePeriod: string
   readonly risklessRate: number
   readonly risklessRateAt: string
   readonly risklessRateSource: string

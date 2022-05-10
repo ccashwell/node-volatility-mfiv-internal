@@ -1,4 +1,4 @@
-import { BaseContext, MfivDuration, MfivResult, OptionSummary } from "./types";
+import { BaseContext, MfivResult, OptionSummary } from "./types";
 /**
  * Compute the volatility index value for the given mfiv context and model parameters
  *
@@ -8,7 +8,7 @@ import { BaseContext, MfivDuration, MfivResult, OptionSummary } from "./types";
  */
 export declare function compute(context: MfivContext, params: MfivParams): MfivResult;
 export declare type MfivContext = BaseContext & {
-    readonly timePeriod: MfivDuration;
+    readonly timePeriod: string;
     readonly risklessRate: number;
     readonly risklessRateAt: string;
     readonly risklessRateSource: string;
