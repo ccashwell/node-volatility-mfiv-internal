@@ -91,7 +91,7 @@ class MfivStep2 {
         const nextPairs = Array.from(expiries.nextOptionPairMap.values());
         const NT1 = Date.parse(params.nearDate) - nowEpoch;
         const NT2 = Date.parse(params.nextDate) - nowEpoch;
-        const N14 = dayjs_1.default.duration({ weeks: 2 }).asMilliseconds();
+        const TP = dayjs_1.default.duration({ days: parseInt(context.timePeriod) }).asMilliseconds();
         const N365 = dayjs_1.default.duration({ years: 1 }).asMilliseconds();
         const T1 = NT1 / N365;
         const T2 = NT2 / N365;
@@ -112,7 +112,7 @@ class MfivStep2 {
             finalNextBook: nextFinalBook,
             NT1,
             NT2,
-            N14,
+            TP,
             N365,
             T1,
             T2,

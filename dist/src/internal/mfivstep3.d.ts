@@ -12,11 +12,11 @@ export declare class MfivStep3 {
             A: number;
             B: number;
             C: number;
-            finalNearBook: [string, import("./types_2022_03_22").MfivOptionSummary][];
-            finalNextBook: [string, import("./types_2022_03_22").MfivOptionSummary][];
+            finalNearBook: [string, import("./types_2022_05_10").MfivOptionSummary][];
+            finalNextBook: [string, import("./types_2022_05_10").MfivOptionSummary][];
             NT1: number;
             NT2: number;
-            N14: number;
+            TP: number;
             N365: number;
             T1: number;
             T2: number;
