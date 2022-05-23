@@ -173,11 +173,11 @@
     },
     "Asset": {
       "type": "string",
-      "enum": ["ETH", "BTC"]
+      "enum": ["ETH", "BTC", "SOL"]
     },
     "Currency": {
       "type": "string",
-      "enum": ["ETH", "BTC"]
+      "enum": ["ETH", "BTC", "SOL"]
     },
     "MfivParams": {
       "type": "object",
