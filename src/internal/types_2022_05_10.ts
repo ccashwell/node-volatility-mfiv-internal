@@ -13,7 +13,7 @@ export const MFIV_DURATIONS = ["14D"] as const
 
 export const EVIDENCES = ["MFIV.ESTIMATE.EVIDENCE"] as const
 
-export const MFIV_ASSETS = ["ETH", "BTC"] as const
+export const MFIV_ASSETS = ["ETH", "BTC", "SOL"] as const
 
 export type Version = typeof VERSIONS[number]
 
