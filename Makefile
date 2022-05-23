@@ -20,7 +20,7 @@ login:
 # bootstrap-npm:
 # 	CODEARTIFACT_AUTH_TOKEN != aws codeartifact get-authorization-token --domain artifacts --domain-owner $(CODEARTIFACT_ACCOUNT) --query authorizationToken --output text
 
-.npmrc:
+.npmrc: login
 	echo registry=https://artifacts-061573364520.d.codeartifact.us-east-2.amazonaws.com/npm/npm-store/ > .npmrc && \
 	echo //artifacts-$(CODEARTIFACT_ACCOUNT).d.codeartifact.us-east-2.amazonaws.com/npm/npm-store/:always-auth=true >> .npmrc && \
 	echo //artifacts-$(CODEARTIFACT_ACCOUNT).d.codeartifact.us-east-2.amazonaws.com/npm/npm-store/:_authToken=${CODEARTIFACT_AUTH_TOKEN} >> .npmrc
