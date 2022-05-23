@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0-alpha.3](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.3.0-alpha.2...v0.3.0-alpha.3) (2022-05-23)
+
+
+### Features
+
+* add solana asset type ([86d5c2a](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/commit/86d5c2a6ad658ff03a655d699ef59733a8120e42))
+
 ## [0.3.0-alpha.2](https://github.com/VolatilityGroup/node-volatility-mfiv-internal/compare/v0.3.0-alpha.1...v0.3.0-alpha.2) (2022-05-11)
 
 
